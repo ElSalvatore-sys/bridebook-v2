@@ -41,6 +41,7 @@ coverage/
 # Supabase
 supabase/.branches
 supabase/.temp
+.supabase/
 
 # Sentry
 .sentryclirc
