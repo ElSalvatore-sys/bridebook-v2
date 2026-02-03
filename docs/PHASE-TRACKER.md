@@ -17,7 +17,7 @@
 
 ## Phase 0: Discovery
 
-**Status:** `IN PROGRESS`
+**Status:** `DONE`
 
 | Task | Status | Notes |
 |------|--------|-------|
@@ -36,15 +36,22 @@
 
 ## Phase 1: Planning
 
-**Status:** `PENDING`
+**Status:** `DONE`
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Technical Architecture | PENDING | |
-| Data Model Design | PENDING | |
-| API Design | PENDING | |
-| Design System Spec | PENDING | |
-| Sprint Planning | PENDING | |
+| ADR-001: Frontend Framework | DONE | React + Vite (not Next.js) |
+| ADR-002: Backend Service | DONE | Supabase |
+| ADR-003: Styling Approach | DONE | TailwindCSS + shadcn/ui |
+| ADR-004: Authentication | DONE | Supabase Auth + Google OAuth |
+| ADR-005: Database Strategy | DONE | PostgreSQL + RLS |
+| ADR-006: Hosting & Deployment | DONE | Vercel + Supabase Cloud |
+| ADR-007: Testing Strategy | DONE | Vitest + Playwright |
+| ADR-008: State Management | DONE | TanStack Query + Zustand |
+| ADR-009: Form Handling | DONE | React Hook Form + Zod |
+| ARCHITECTURE.md | DONE | System diagram, folder structure |
+| PERFORMANCE-BUDGETS.md | DONE | Core Web Vitals targets |
+| API-CONTRACTS.md | DONE | MVP endpoints specification |
 
 ---
 
@@ -54,11 +61,14 @@
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Next.js Project Init | PENDING | |
-| Supabase Project Setup | PENDING | |
-| Vercel Deployment | PENDING | |
-| CI/CD Pipeline | PENDING | |
-| Environment Config | PENDING | |
+| Vite + React + TypeScript init | PENDING | |
+| TailwindCSS configuration | PENDING | |
+| shadcn/ui setup | PENDING | |
+| Supabase project creation | PENDING | |
+| Vercel deployment | PENDING | |
+| Sentry integration | PENDING | |
+| CI/CD pipeline | PENDING | GitHub Actions |
+| Environment configuration | PENDING | .env files |
 
 ---
 
@@ -68,12 +78,13 @@
 
 | Task | Status | Notes |
 |------|--------|-------|
-| Schema Design | PENDING | |
-| Migration 1: Auth Tables | PENDING | |
-| Migration 2: Categories | PENDING | |
-| Migration 3: Core Tables | PENDING | |
-| RLS Policies | PENDING | |
-| Seed Data | PENDING | |
+| Schema design | PENDING | Based on API contracts |
+| Migration 1: Auth tables | PENDING | profiles table |
+| Migration 2: Core tables | PENDING | bookings, messages |
+| Migration 3: Supporting tables | PENDING | availability, threads |
+| RLS policies | PENDING | Security-first approach |
+| Seed data | PENDING | Development data |
+| Type generation | PENDING | supabase gen types |
 
 ---
 
@@ -111,7 +122,7 @@
 ## Timeline Overview
 
 ```
-Week 1-2:   Phase 0 (Discovery) + Phase 1 (Planning)
+Week 1-2:   Phase 0 (Discovery) + Phase 1 (Planning)  ✅
 Week 3-4:   Phase 2 (Setup) + Phase 3 (Database)
 Week 5-8:   Phases 4-11 (Core Features - P0)
 Week 9-12:  Phases 12-18 (Extended Features - P1)
@@ -126,9 +137,27 @@ Week 15-16: Phases 24-25 (Beta & Launch)
 | Milestone | Target | Status |
 |-----------|--------|--------|
 | Repository Created | Week 1 | DONE |
-| Phase 0 Complete | Week 1 | IN PROGRESS |
+| Phase 0 Complete | Week 1 | DONE |
+| Phase 1 Complete | Week 2 | DONE |
 | Database Live | Week 4 | PENDING |
 | Auth Working | Week 5 | PENDING |
 | P0 Alpha | Week 8 | PENDING |
 | P1 Beta | Week 12 | PENDING |
 | Public Launch | Week 16 | PENDING |
+
+---
+
+## Tech Stack (Decided)
+
+| Layer | Technology | ADR |
+|-------|------------|-----|
+| Frontend | React 18 + Vite + TypeScript | ADR-001 |
+| Styling | TailwindCSS + shadcn/ui | ADR-003 |
+| State (Server) | TanStack Query | ADR-008 |
+| State (Client) | Zustand | ADR-008 |
+| Forms | React Hook Form + Zod | ADR-009 |
+| Backend | Supabase | ADR-002 |
+| Database | PostgreSQL + RLS | ADR-005 |
+| Auth | Supabase Auth + Google OAuth | ADR-004 |
+| Hosting | Vercel + Supabase Cloud | ADR-006 |
+| Testing | Vitest + Playwright | ADR-007 |
