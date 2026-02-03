@@ -35,16 +35,6 @@ CREATE POLICY "profiles_select_own" ON profiles
 CREATE POLICY "profiles_update_own" ON profiles
   FOR UPDATE USING (auth.uid() = id AND deleted_at IS NULL);
 
--- Public profile access (when linked artist/venue is public - for search results)
-CREATE POLICY "profiles_select_public" ON profiles
-  FOR SELECT USING (
-    deleted_at IS NULL AND (
-      EXISTS (SELECT 1 FROM artists WHERE profile_id = profiles.id AND is_public = true AND deleted_at IS NULL)
-      OR
-      EXISTS (SELECT 1 FROM venues WHERE profile_id = profiles.id AND is_public = true AND deleted_at IS NULL)
-    )
-  );
-
 -- Admin full access
 CREATE POLICY "profiles_admin_all" ON profiles
   FOR ALL USING (
@@ -199,3 +189,18 @@ CREATE TRIGGER artists_updated_at
 CREATE TRIGGER venues_updated_at
   BEFORE UPDATE ON venues
   FOR EACH ROW EXECUTE FUNCTION update_updated_at();
+
+-- =============================================
+-- DEFERRED POLICIES (require all tables to exist)
+-- =============================================
+
+-- Public profile access (when linked artist/venue is public - for search results)
+-- Note: Must be created after artists and venues tables exist
+CREATE POLICY "profiles_select_public" ON profiles
+  FOR SELECT USING (
+    deleted_at IS NULL AND (
+      EXISTS (SELECT 1 FROM artists WHERE profile_id = profiles.id AND is_public = true AND deleted_at IS NULL)
+      OR
+      EXISTS (SELECT 1 FROM venues WHERE profile_id = profiles.id AND is_public = true AND deleted_at IS NULL)
+    )
+  );
