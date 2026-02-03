@@ -1,4 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { Toaster } from 'sonner'
+import { AuthProvider } from '@/context/AuthContext'
+import { DevAuthPanel } from '@/components/dev/DevAuthPanel'
 import { Button } from '@/components/ui/button'
 import {
   Card,
@@ -32,11 +35,15 @@ function HomePage() {
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+        </Routes>
+      </BrowserRouter>
+      <Toaster position="bottom-left" />
+      <DevAuthPanel />
+    </AuthProvider>
   )
 }
 
