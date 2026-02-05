@@ -1,30 +1,106 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 @theme {
+  /* --- Light mode tokens (default) --- */
+
+  /* Base */
   --color-background: hsl(0 0% 100%);
-  --color-foreground: hsl(240 10% 3.9%);
+  --color-foreground: hsl(222 47% 11%);
+
+  /* Cards & Popovers */
   --color-card: hsl(0 0% 100%);
-  --color-card-foreground: hsl(240 10% 3.9%);
+  --color-card-foreground: hsl(222 47% 11%);
   --color-popover: hsl(0 0% 100%);
-  --color-popover-foreground: hsl(240 10% 3.9%);
-  --color-primary: hsl(240 5.9% 10%);
-  --color-primary-foreground: hsl(0 0% 98%);
-  --color-secondary: hsl(240 4.8% 95.9%);
-  --color-secondary-foreground: hsl(240 5.9% 10%);
-  --color-muted: hsl(240 4.8% 95.9%);
-  --color-muted-foreground: hsl(240 3.8% 46.1%);
-  --color-accent: hsl(240 4.8% 95.9%);
-  --color-accent-foreground: hsl(240 5.9% 10%);
-  --color-destructive: hsl(0 84.2% 60.2%);
+  --color-popover-foreground: hsl(222 47% 11%);
+
+  /* Primary — Blue #3B82F6 */
+  --color-primary: hsl(217 91% 60%);
+  --color-primary-foreground: hsl(0 0% 100%);
+
+  /* Secondary — soft blue-gray */
+  --color-secondary: hsl(217 33% 95%);
+  --color-secondary-foreground: hsl(222 47% 11%);
+
+  /* Muted */
+  --color-muted: hsl(220 14% 96%);
+  --color-muted-foreground: hsl(220 9% 46%);
+
+  /* Accent — neutral hover (shadcn components use this for hover states) */
+  --color-accent: hsl(217 33% 95%);
+  --color-accent-foreground: hsl(222 47% 11%);
+
+  /* Brand — Amber #F59E0B (for badges, highlights, CTAs) */
+  --color-brand: hsl(38 92% 50%);
+  --color-brand-foreground: hsl(0 0% 100%);
+
+  /* Destructive */
+  --color-destructive: hsl(0 84% 60%);
   --color-destructive-foreground: hsl(0 0% 98%);
-  --color-border: hsl(240 5.9% 90%);
-  --color-input: hsl(240 5.9% 90%);
-  --color-ring: hsl(240 5.9% 10%);
+
+  /* Borders & Inputs */
+  --color-border: hsl(220 13% 91%);
+  --color-input: hsl(220 13% 91%);
+  --color-ring: hsl(217 91% 60%);
+
+  /* Status colors */
+  --color-success: hsl(142 71% 45%);
+  --color-success-foreground: hsl(0 0% 100%);
+  --color-warning: hsl(38 92% 50%);
+  --color-warning-foreground: hsl(0 0% 0%);
+  --color-info: hsl(199 89% 48%);
+  --color-info-foreground: hsl(0 0% 100%);
+
+  /* Chart palette */
+  --color-chart-1: hsl(217 91% 60%);
+  --color-chart-2: hsl(38 92% 50%);
+  --color-chart-3: hsl(142 71% 45%);
+  --color-chart-4: hsl(280 68% 60%);
+  --color-chart-5: hsl(346 77% 50%);
+
+  /* Radius */
   --radius-lg: 0.5rem;
   --radius-md: 0.375rem;
   --radius-sm: 0.25rem;
 }
 
+/* Dark mode overrides — activated via .dark class on <html> */
+.dark {
+  --color-background: hsl(222 47% 11%);
+  --color-foreground: hsl(210 40% 98%);
+  --color-card: hsl(222 47% 14%);
+  --color-card-foreground: hsl(210 40% 98%);
+  --color-popover: hsl(222 47% 14%);
+  --color-popover-foreground: hsl(210 40% 98%);
+  --color-primary: hsl(217 91% 60%);
+  --color-primary-foreground: hsl(0 0% 100%);
+  --color-secondary: hsl(217 33% 18%);
+  --color-secondary-foreground: hsl(210 40% 98%);
+  --color-muted: hsl(223 47% 17%);
+  --color-muted-foreground: hsl(218 11% 65%);
+  --color-accent: hsl(217 33% 18%);
+  --color-accent-foreground: hsl(210 40% 98%);
+  --color-brand: hsl(38 92% 50%);
+  --color-brand-foreground: hsl(0 0% 100%);
+  --color-destructive: hsl(0 63% 51%);
+  --color-destructive-foreground: hsl(0 0% 98%);
+  --color-border: hsl(217 33% 20%);
+  --color-input: hsl(217 33% 20%);
+  --color-ring: hsl(224 64% 33%);
+  --color-success: hsl(142 71% 45%);
+  --color-success-foreground: hsl(0 0% 100%);
+  --color-warning: hsl(38 92% 50%);
+  --color-warning-foreground: hsl(0 0% 0%);
+  --color-info: hsl(199 89% 48%);
+  --color-info-foreground: hsl(0 0% 100%);
+  --color-chart-1: hsl(220 70% 50%);
+  --color-chart-2: hsl(38 92% 50%);
+  --color-chart-3: hsl(142 69% 58%);
+  --color-chart-4: hsl(280 65% 65%);
+  --color-chart-5: hsl(346 77% 60%);
+}
+
+/* Global resets */
 * {
   border-color: var(--color-border);
 }
