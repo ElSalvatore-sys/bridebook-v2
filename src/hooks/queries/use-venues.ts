@@ -13,6 +13,7 @@ import {
   type Venue,
   type VenueWithDetails,
   type VenueType,
+  type VenueDiscoverResult,
 } from '@/services'
 import { type CreateVenueInput, type UpdateVenueInput } from '@/lib/validations'
 import { showSuccess, showError } from '@/lib/toast'
@@ -28,6 +29,7 @@ export const venueKeys = {
   detail: (id: string) => [...venueKeys.details(), id] as const,
   byProfile: (id: string) => [...venueKeys.all, 'profile', id] as const,
   search: (q: string) => [...venueKeys.all, 'search', q] as const,
+  similar: (id: string) => [...venueKeys.all, 'similar', id] as const,
 }
 
 interface ListOptions {
@@ -138,6 +140,21 @@ export function useUpdateVenue() {
     onError: (error) => {
       showError(error)
     },
+  })
+}
+
+/**
+ * Hook to get similar venues
+ */
+export function useSimilarVenues(
+  venueId: string,
+  options?: Omit<UseQueryOptions<VenueDiscoverResult[], Error>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: venueKeys.similar(venueId),
+    queryFn: () => VenueService.getSimilar(venueId),
+    enabled: !!venueId,
+    ...options,
   })
 }
 

@@ -34,6 +34,8 @@ export {
   type FavoriteType,
 } from './favorites'
 
+export { AvailabilityService, type Availability } from './availability'
+
 export { GenreService, type Genre } from './genres'
 
 export { AmenityService, type Amenity } from './amenities'

@@ -18,6 +18,7 @@ export {
   useArtistByProfile,
   useArtists,
   useSearchArtists,
+  useSimilarArtists,
   useCreateArtist,
   useUpdateArtist,
   useDeleteArtist,
@@ -30,10 +31,14 @@ export {
   useVenueByProfile,
   useVenues,
   useSearchVenues,
+  useSimilarVenues,
   useCreateVenue,
   useUpdateVenue,
   useDeleteVenue,
 } from './use-venues'
+
+// Availability hooks and keys
+export { availabilityKeys, useAvailability } from './use-availability'
 
 // Favorite hooks and keys
 export {

@@ -12,6 +12,7 @@ import {
   ArtistService,
   type Artist,
   type ArtistWithDetails,
+  type ArtistDiscoverResult,
 } from '@/services'
 import { type CreateArtistInput, type UpdateArtistInput } from '@/lib/validations'
 import { showSuccess, showError } from '@/lib/toast'
@@ -27,6 +28,7 @@ export const artistKeys = {
   detail: (id: string) => [...artistKeys.details(), id] as const,
   byProfile: (id: string) => [...artistKeys.all, 'profile', id] as const,
   search: (q: string) => [...artistKeys.all, 'search', q] as const,
+  similar: (id: string) => [...artistKeys.all, 'similar', id] as const,
 }
 
 interface ListOptions {
@@ -136,6 +138,21 @@ export function useUpdateArtist() {
     onError: (error) => {
       showError(error)
     },
+  })
+}
+
+/**
+ * Hook to get similar artists
+ */
+export function useSimilarArtists(
+  artistId: string,
+  options?: Omit<UseQueryOptions<ArtistDiscoverResult[], Error>, 'queryKey' | 'queryFn'>
+) {
+  return useQuery({
+    queryKey: artistKeys.similar(artistId),
+    queryFn: () => ArtistService.getSimilar(artistId),
+    enabled: !!artistId,
+    ...options,
   })
 }
 

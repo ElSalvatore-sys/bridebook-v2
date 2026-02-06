@@ -104,6 +104,7 @@ export class ArtistService {
       )
       .eq('id', id)
       .is('deleted_at', null)
+      .order('sort_order', { referencedTable: 'artist_media', ascending: true })
       .single()
 
     if (error) handleSupabaseError(error)
@@ -220,6 +221,96 @@ export class ArtistService {
 
     if (error) handleSupabaseError(error)
     return { data: data ?? [], count }
+  }
+
+  /**
+   * Get similar artists based on shared genres
+   */
+  static async getSimilar(
+    artistId: string,
+    limit = 4
+  ): Promise<ArtistDiscoverResult[]> {
+    // First get this artist's genre IDs
+    const { data: genreRows } = await supabase
+      .from('artist_genres')
+      .select('genre_id')
+      .eq('artist_id', artistId)
+
+    const genreIds = genreRows?.map((g) => g.genre_id) ?? []
+
+    if (genreIds.length === 0) {
+      // No genres — fall back to latest public artists
+      const { data, error } = await supabase
+        .from('artists')
+        .select(
+          `
+          id, stage_name, bio, hourly_rate, years_experience, has_equipment,
+          artist_media!left (url, is_primary),
+          artist_genres!left (genre_id, genres (name))
+        `
+        )
+        .is('deleted_at', null)
+        .eq('is_public', true)
+        .neq('id', artistId)
+        .order('created_at', { ascending: false })
+        .limit(limit)
+
+      if (error) handleSupabaseError(error)
+      return ArtistService.transformToDiscoverResults(data ?? [])
+    }
+
+    // Find artists sharing genres, excluding self
+    const { data, error } = await supabase
+      .from('artists')
+      .select(
+        `
+        id, stage_name, bio, hourly_rate, years_experience, has_equipment,
+        artist_media!left (url, is_primary),
+        artist_genres!inner (genre_id, genres (name))
+      `
+      )
+      .is('deleted_at', null)
+      .eq('is_public', true)
+      .neq('id', artistId)
+      .in('artist_genres.genre_id', genreIds)
+      .limit(limit)
+
+    if (error) handleSupabaseError(error)
+
+    // Deduplicate (artist may share multiple genres)
+    const seen = new Set<string>()
+    const unique = (data ?? []).filter((a: Record<string, unknown>) => {
+      const id = a.id as string
+      if (seen.has(id)) return false
+      seen.add(id)
+      return true
+    })
+
+    return ArtistService.transformToDiscoverResults(unique.slice(0, limit))
+  }
+
+  private static transformToDiscoverResults(
+    data: Record<string, unknown>[]
+  ): ArtistDiscoverResult[] {
+    return data.map((artist) => {
+      const media = artist.artist_media as Array<{ url: string; is_primary: boolean }> | null
+      const primaryMedia = media?.find((m) => m.is_primary)
+
+      const genreJoins = artist.artist_genres as Array<{ genres: { name: string } | null }> | null
+      const genreNames =
+        genreJoins?.map((g) => g.genres?.name).filter((n): n is string => !!n) ?? []
+
+      return {
+        id: artist.id as string,
+        stage_name: artist.stage_name as string,
+        bio: artist.bio as string | null,
+        hourly_rate: artist.hourly_rate as number | null,
+        years_experience: artist.years_experience as number | null,
+        has_equipment: artist.has_equipment as boolean,
+        primary_image_url: primaryMedia?.url ?? null,
+        genre_names: [...new Set(genreNames)],
+      }
+    })
   }
 
   /**

@@ -22,6 +22,7 @@ export type Amenity = Tables<'amenities'>
 export interface VenueWithDetails extends Venue {
   venue_amenities: (VenueAmenity & { amenities: Amenity })[]
   venue_media: VenueMedia[]
+  cities: { name: string } | null
 }
 
 interface PaginatedResult<T> {
@@ -105,15 +106,17 @@ export class VenueService {
         `
         *,
         venue_amenities (*, amenities (*)),
-        venue_media (*)
+        venue_media (*),
+        cities!left (name)
       `
       )
       .eq('id', id)
       .is('deleted_at', null)
+      .order('sort_order', { referencedTable: 'venue_media', ascending: true })
       .single()
 
     if (error) handleSupabaseError(error)
-    return data as VenueWithDetails
+    return data as unknown as VenueWithDetails
   }
 
   /**
@@ -220,6 +223,77 @@ export class VenueService {
 
     if (error) handleSupabaseError(error)
     return { data: data ?? [], count }
+  }
+
+  /**
+   * Get similar venues based on same type or city
+   */
+  static async getSimilar(
+    venueId: string,
+    limit = 4
+  ): Promise<VenueDiscoverResult[]> {
+    // Get this venue's type and city
+    const { data: venue, error: venueError } = await supabase
+      .from('venues')
+      .select('type, city_id')
+      .eq('id', venueId)
+      .single()
+
+    if (venueError) handleSupabaseError(venueError)
+
+    // Find venues of same type or same city, excluding self
+    let query = supabase
+      .from('venues')
+      .select(
+        `
+        id, venue_name, description, type, street, capacity_min, capacity_max,
+        cities!left (name),
+        venue_media!left (url, is_primary),
+        venue_amenities!left (amenity_id, amenities (name))
+      `
+      )
+      .is('deleted_at', null)
+      .eq('is_public', true)
+      .neq('id', venueId)
+
+    if (venue?.type) {
+      query = query.eq('type', venue.type)
+    }
+
+    const { data, error } = await query
+      .order('created_at', { ascending: false })
+      .limit(limit)
+
+    if (error) handleSupabaseError(error)
+    return VenueService.transformToDiscoverResults(data ?? [])
+  }
+
+  private static transformToDiscoverResults(
+    data: Record<string, unknown>[]
+  ): VenueDiscoverResult[] {
+    return data.map((venue) => {
+      const media = venue.venue_media as Array<{ url: string; is_primary: boolean }> | null
+      const primaryMedia = media?.find((m) => m.is_primary)
+      const city = venue.cities as { name: string } | null
+      const amenityJoins = venue.venue_amenities as Array<{
+        amenities: { name: string } | null
+      }> | null
+      const amenityNames =
+        amenityJoins?.map((a) => a.amenities?.name).filter((n): n is string => !!n) ?? []
+
+      return {
+        id: venue.id as string,
+        venue_name: venue.venue_name as string,
+        description: venue.description as string | null,
+        type: venue.type as VenueType,
+        city_name: city?.name ?? null,
+        street: venue.street as string | null,
+        capacity_min: venue.capacity_min as number | null,
+        capacity_max: venue.capacity_max as number | null,
+        primary_image_url: primaryMedia?.url ?? null,
+        amenity_names: [...new Set(amenityNames)],
+      }
+    })
   }
 
   /**

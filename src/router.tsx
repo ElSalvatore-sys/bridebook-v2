@@ -31,6 +31,12 @@ const ArtistsPage = lazy(() =>
 const VenuesPage = lazy(() =>
   import('@/pages/discovery/VenuesPage').then((m) => ({ default: m.VenuesPage }))
 )
+const ArtistDetailPage = lazy(() =>
+  import('@/pages/discovery/ArtistDetailPage').then((m) => ({ default: m.ArtistDetailPage }))
+)
+const VenueDetailPage = lazy(() =>
+  import('@/pages/discovery/VenueDetailPage').then((m) => ({ default: m.VenueDetailPage }))
+)
 
 // Wrapper for lazy-loaded components
 function LazyPage({ children }: { children: React.ReactNode }) {
@@ -134,10 +140,26 @@ export const router = createBrowserRouter([
             ),
           },
           {
+            path: 'artists/:id',
+            element: (
+              <LazyPage>
+                <ArtistDetailPage />
+              </LazyPage>
+            ),
+          },
+          {
             path: 'venues',
             element: (
               <LazyPage>
                 <VenuesPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'venues/:id',
+            element: (
+              <LazyPage>
+                <VenueDetailPage />
               </LazyPage>
             ),
           },
