@@ -14,7 +14,7 @@ export type ModalType =
   | 'enquiry-form'
   | 'vendor-preview'
   | 'image-gallery'
-  | 'share-wedding'
+  | 'share-event'
   | null
 
 interface UIState {

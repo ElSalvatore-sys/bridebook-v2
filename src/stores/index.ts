@@ -11,9 +11,9 @@ export {
 } from './filter-store'
 
 export {
-  useWeddingStore,
-  type Wedding,
-} from './wedding-store'
+  useEventStore,
+  type Event,
+} from './event-store'
 
 export {
   usePlanningStore,

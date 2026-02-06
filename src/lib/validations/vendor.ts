@@ -24,10 +24,10 @@ const budgetRanges = [
 ] as const
 
 /**
- * Vendor enquiry form schema
+ * Booking enquiry form schema
  * CRITICAL CONVERSION FORM - keep fields minimal but useful
  */
-export const vendorEnquirySchema = z.object({
+export const bookingEnquirySchema = z.object({
   // Contact info
   name: requiredString('Your name').max(100, 'Name is too long'),
   email: emailSchema,
@@ -54,8 +54,8 @@ export const vendorEnquirySchema = z.object({
   // Preferences
   flexible_on_date: z.boolean().default(false),
 
-  // Optional wedding reference (if logged in)
-  wedding_id: uuidSchema.optional(),
+  // Optional event reference (if logged in)
+  event_id: uuidSchema.optional(),
 })
 
 /**
@@ -89,6 +89,6 @@ export const vendorReviewSchema = z.object({
 })
 
 // Type exports
-export type VendorEnquiryInput = z.infer<typeof vendorEnquirySchema>
+export type BookingEnquiryInput = z.infer<typeof bookingEnquirySchema>
 export type VendorReviewInput = z.infer<typeof vendorReviewSchema>
 export type BudgetRange = (typeof budgetRanges)[number]

@@ -53,21 +53,22 @@ export {
   type ResetPasswordInput,
 } from './auth'
 
-// Wedding
+// Event
 export {
-  createWeddingSchema,
-  updateWeddingSchema,
-  quickSetupSchema,
-  type CreateWeddingInput,
-  type UpdateWeddingInput,
-  type QuickSetupInput,
-} from './wedding'
+  createEventSchema,
+  updateEventSchema,
+  quickEventSetupSchema,
+  type CreateEventInput,
+  type UpdateEventInput,
+  type QuickEventSetupInput,
+  type EventType,
+} from './event'
 
-// Vendor
+// Vendor/Booking
 export {
-  vendorEnquirySchema,
+  bookingEnquirySchema,
   vendorReviewSchema,
-  type VendorEnquiryInput,
+  type BookingEnquiryInput,
   type VendorReviewInput,
   type BudgetRange,
 } from './vendor'

@@ -6,7 +6,7 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import { useUIStore } from '../ui-store'
 import { useFilterStore } from '../filter-store'
-import { useWeddingStore, type Wedding } from '../wedding-store'
+import { useEventStore, type Event } from '../event-store'
 import { usePlanningStore } from '../planning-store'
 
 // ========== UI STORE TESTS ==========
@@ -384,14 +384,14 @@ describe('Filter Store', () => {
   })
 })
 
-// ========== WEDDING STORE TESTS ==========
+// ========== EVENT STORE TESTS ==========
 
-describe('Wedding Store', () => {
-  const mockWedding: Wedding = {
-    id: 'wedding-123',
-    partner1_name: 'Alice',
-    partner2_name: 'Bob',
-    wedding_date: '2025-06-15',
+describe('Event Store', () => {
+  const mockEvent: Event = {
+    id: 'event-123',
+    event_name: 'Summer Festival',
+    organizer_name: 'Music Productions GmbH',
+    event_date: '2025-06-15',
     venue_id: 'venue-456',
     venue_name: 'Grand Ballroom',
     budget_total: 25000,
@@ -400,104 +400,104 @@ describe('Wedding Store', () => {
   }
 
   beforeEach(() => {
-    useWeddingStore.getState().clearActiveWedding()
+    useEventStore.getState().clearActiveEvent()
   })
 
   describe('Initial State', () => {
     it('has correct initial state', () => {
-      const state = useWeddingStore.getState()
+      const state = useEventStore.getState()
 
-      expect(state.activeWeddingId).toBe(null)
-      expect(state.activeWedding).toBe(null)
-      expect(state.partnerNames).toBe(null)
-      expect(state.weddingDate).toBe(null)
+      expect(state.activeEventId).toBe(null)
+      expect(state.activeEvent).toBe(null)
+      expect(state.organizerName).toBe(null)
+      expect(state.eventDate).toBe(null)
       expect(state.venueName).toBe(null)
     })
   })
 
-  describe('setActiveWedding()', () => {
-    it('sets wedding and updates denormalized fields', () => {
-      const { setActiveWedding } = useWeddingStore.getState()
+  describe('setActiveEvent()', () => {
+    it('sets event and updates denormalized fields', () => {
+      const { setActiveEvent } = useEventStore.getState()
 
-      setActiveWedding(mockWedding)
+      setActiveEvent(mockEvent)
 
-      const state = useWeddingStore.getState()
-      expect(state.activeWedding).toEqual(mockWedding)
-      expect(state.activeWeddingId).toBe('wedding-123')
-      expect(state.partnerNames).toEqual(['Alice', 'Bob'])
-      expect(state.weddingDate).toBe('2025-06-15')
+      const state = useEventStore.getState()
+      expect(state.activeEvent).toEqual(mockEvent)
+      expect(state.activeEventId).toBe('event-123')
+      expect(state.organizerName).toBe('Music Productions GmbH')
+      expect(state.eventDate).toBe('2025-06-15')
       expect(state.venueName).toBe('Grand Ballroom')
     })
 
-    it('handles null wedding', () => {
-      useWeddingStore.setState({ activeWedding: mockWedding })
-      const { setActiveWedding } = useWeddingStore.getState()
+    it('handles null event', () => {
+      useEventStore.setState({ activeEvent: mockEvent })
+      const { setActiveEvent } = useEventStore.getState()
 
-      setActiveWedding(null)
+      setActiveEvent(null)
 
-      const state = useWeddingStore.getState()
-      expect(state.activeWedding).toBe(null)
-      expect(state.activeWeddingId).toBe(null)
-      expect(state.partnerNames).toBe(null)
+      const state = useEventStore.getState()
+      expect(state.activeEvent).toBe(null)
+      expect(state.activeEventId).toBe(null)
+      expect(state.organizerName).toBe(null)
     })
   })
 
-  describe('clearActiveWedding()', () => {
-    it('resets all wedding state', () => {
-      useWeddingStore.setState({
-        activeWedding: mockWedding,
-        activeWeddingId: 'wedding-123',
-        partnerNames: ['Alice', 'Bob'],
-        weddingDate: '2025-06-15',
+  describe('clearActiveEvent()', () => {
+    it('resets all event state', () => {
+      useEventStore.setState({
+        activeEvent: mockEvent,
+        activeEventId: 'event-123',
+        organizerName: 'Music Productions GmbH',
+        eventDate: '2025-06-15',
         venueName: 'Grand Ballroom',
       })
 
-      const { clearActiveWedding } = useWeddingStore.getState()
-      clearActiveWedding()
+      const { clearActiveEvent } = useEventStore.getState()
+      clearActiveEvent()
 
-      const state = useWeddingStore.getState()
-      expect(state.activeWedding).toBe(null)
-      expect(state.activeWeddingId).toBe(null)
-      expect(state.partnerNames).toBe(null)
-      expect(state.weddingDate).toBe(null)
+      const state = useEventStore.getState()
+      expect(state.activeEvent).toBe(null)
+      expect(state.activeEventId).toBe(null)
+      expect(state.organizerName).toBe(null)
+      expect(state.eventDate).toBe(null)
       expect(state.venueName).toBe(null)
     })
   })
 
-  describe('updateWeddingField()', () => {
-    it('updates field and denormalized partner names', () => {
-      useWeddingStore.setState({
-        activeWedding: mockWedding,
-        partnerNames: ['Alice', 'Bob'],
+  describe('updateEventField()', () => {
+    it('updates field and denormalized organizer name', () => {
+      useEventStore.setState({
+        activeEvent: mockEvent,
+        organizerName: 'Music Productions GmbH',
       })
 
-      const { updateWeddingField } = useWeddingStore.getState()
-      updateWeddingField('partner1_name', 'Alicia')
+      const { updateEventField } = useEventStore.getState()
+      updateEventField('organizer_name', 'New Organizer')
 
-      const state = useWeddingStore.getState()
-      expect(state.activeWedding?.partner1_name).toBe('Alicia')
-      expect(state.partnerNames).toEqual(['Alicia', 'Bob'])
+      const state = useEventStore.getState()
+      expect(state.activeEvent?.organizer_name).toBe('New Organizer')
+      expect(state.organizerName).toBe('New Organizer')
     })
 
-    it('updates wedding_date and denormalized field', () => {
-      useWeddingStore.setState({
-        activeWedding: mockWedding,
-        weddingDate: '2025-06-15',
+    it('updates event_date and denormalized field', () => {
+      useEventStore.setState({
+        activeEvent: mockEvent,
+        eventDate: '2025-06-15',
       })
 
-      const { updateWeddingField } = useWeddingStore.getState()
-      updateWeddingField('wedding_date', '2025-09-20')
+      const { updateEventField } = useEventStore.getState()
+      updateEventField('event_date', '2025-09-20')
 
-      const state = useWeddingStore.getState()
-      expect(state.activeWedding?.wedding_date).toBe('2025-09-20')
-      expect(state.weddingDate).toBe('2025-09-20')
+      const state = useEventStore.getState()
+      expect(state.activeEvent?.event_date).toBe('2025-09-20')
+      expect(state.eventDate).toBe('2025-09-20')
     })
 
-    it('does nothing when no active wedding', () => {
-      const { updateWeddingField } = useWeddingStore.getState()
-      updateWeddingField('partner1_name', 'Test')
+    it('does nothing when no active event', () => {
+      const { updateEventField } = useEventStore.getState()
+      updateEventField('organizer_name', 'Test')
 
-      expect(useWeddingStore.getState().activeWedding).toBe(null)
+      expect(useEventStore.getState().activeEvent).toBe(null)
     })
   })
 })
@@ -506,7 +506,7 @@ describe('Wedding Store', () => {
 
 describe('Planning Store', () => {
   beforeEach(() => {
-    useWeddingStore.getState().clearActiveWedding()
+    useEventStore.getState().clearActiveEvent()
     usePlanningStore.getState().resetPlanningState()
   })
 

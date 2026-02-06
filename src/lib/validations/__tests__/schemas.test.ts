@@ -18,10 +18,10 @@ import {
   signupSchema,
   resetPasswordSchema,
 } from '../auth'
-import { vendorEnquirySchema } from '../vendor'
+import { bookingEnquirySchema } from '../vendor'
 import { createArtistSchema } from '../artist'
 import { createVenueSchema } from '../venue'
-import { createWeddingSchema } from '../wedding'
+import { createEventSchema } from '../event'
 import { createTaskSchema, createGuestSchema } from '../planning'
 
 // ========== COMMON SCHEMAS ==========
@@ -337,9 +337,9 @@ describe('Auth Schemas', () => {
   })
 })
 
-// ========== VENDOR ENQUIRY SCHEMA (CRITICAL) ==========
+// ========== BOOKING ENQUIRY SCHEMA (CRITICAL) ==========
 
-describe('Vendor Enquiry Schema', () => {
+describe('Booking Enquiry Schema', () => {
   const tomorrow = new Date()
   tomorrow.setDate(tomorrow.getDate() + 1)
   const tomorrowStr = tomorrow.toISOString().split('T')[0]
@@ -351,18 +351,18 @@ describe('Vendor Enquiry Schema', () => {
     event_date: tomorrowStr,
     guest_count: 100,
     budget_range: '5000_10000' as const,
-    message: 'We are looking for a DJ for our wedding party on the above date.',
+    message: 'We are looking for a DJ for our corporate event on the above date.',
     flexible_on_date: false,
   }
 
   it('accepts valid enquiry data', () => {
-    const result = vendorEnquirySchema.safeParse(validEnquiry)
+    const result = bookingEnquirySchema.safeParse(validEnquiry)
     expect(result.success).toBe(true)
   })
 
   describe('name field', () => {
     it('rejects empty name', () => {
-      const result = vendorEnquirySchema.safeParse({
+      const result = bookingEnquirySchema.safeParse({
         ...validEnquiry,
         name: '',
       })
@@ -370,7 +370,7 @@ describe('Vendor Enquiry Schema', () => {
     })
 
     it('rejects name over 100 chars', () => {
-      const result = vendorEnquirySchema.safeParse({
+      const result = bookingEnquirySchema.safeParse({
         ...validEnquiry,
         name: 'a'.repeat(101),
       })
@@ -380,7 +380,7 @@ describe('Vendor Enquiry Schema', () => {
 
   describe('email field', () => {
     it('requires valid email', () => {
-      const result = vendorEnquirySchema.safeParse({
+      const result = bookingEnquirySchema.safeParse({
         ...validEnquiry,
         email: 'invalid',
       })
@@ -390,7 +390,7 @@ describe('Vendor Enquiry Schema', () => {
 
   describe('phone field', () => {
     it('requires German phone format', () => {
-      const result = vendorEnquirySchema.safeParse({
+      const result = bookingEnquirySchema.safeParse({
         ...validEnquiry,
         phone: '+1555123456',
       })
@@ -398,7 +398,7 @@ describe('Vendor Enquiry Schema', () => {
     })
 
     it('allows null phone', () => {
-      const result = vendorEnquirySchema.safeParse({
+      const result = bookingEnquirySchema.safeParse({
         ...validEnquiry,
         phone: null,
       })
@@ -408,7 +408,7 @@ describe('Vendor Enquiry Schema', () => {
 
   describe('event_date field', () => {
     it('requires future date', () => {
-      const result = vendorEnquirySchema.safeParse({
+      const result = bookingEnquirySchema.safeParse({
         ...validEnquiry,
         event_date: '2020-01-01',
       })
@@ -418,7 +418,7 @@ describe('Vendor Enquiry Schema', () => {
 
   describe('guest_count field', () => {
     it('requires integer', () => {
-      const result = vendorEnquirySchema.safeParse({
+      const result = bookingEnquirySchema.safeParse({
         ...validEnquiry,
         guest_count: 100.5,
       })
@@ -426,7 +426,7 @@ describe('Vendor Enquiry Schema', () => {
     })
 
     it('requires at least 1', () => {
-      const result = vendorEnquirySchema.safeParse({
+      const result = bookingEnquirySchema.safeParse({
         ...validEnquiry,
         guest_count: 0,
       })
@@ -434,7 +434,7 @@ describe('Vendor Enquiry Schema', () => {
     })
 
     it('rejects over 10000', () => {
-      const result = vendorEnquirySchema.safeParse({
+      const result = bookingEnquirySchema.safeParse({
         ...validEnquiry,
         guest_count: 10001,
       })
@@ -452,7 +452,7 @@ describe('Vendor Enquiry Schema', () => {
         'over_10000',
       ]
       for (const range of ranges) {
-        const result = vendorEnquirySchema.safeParse({
+        const result = bookingEnquirySchema.safeParse({
           ...validEnquiry,
           budget_range: range,
         })
@@ -461,7 +461,7 @@ describe('Vendor Enquiry Schema', () => {
     })
 
     it('rejects invalid budget range', () => {
-      const result = vendorEnquirySchema.safeParse({
+      const result = bookingEnquirySchema.safeParse({
         ...validEnquiry,
         budget_range: 'invalid',
       })
@@ -471,7 +471,7 @@ describe('Vendor Enquiry Schema', () => {
 
   describe('message field', () => {
     it('requires at least 20 characters', () => {
-      const result = vendorEnquirySchema.safeParse({
+      const result = bookingEnquirySchema.safeParse({
         ...validEnquiry,
         message: 'Too short',
       })
@@ -482,7 +482,7 @@ describe('Vendor Enquiry Schema', () => {
     })
 
     it('rejects over 2000 characters', () => {
-      const result = vendorEnquirySchema.safeParse({
+      const result = bookingEnquirySchema.safeParse({
         ...validEnquiry,
         message: 'a'.repeat(2001),
       })
@@ -544,24 +544,24 @@ describe('Other Schemas', () => {
     })
   })
 
-  describe('createWeddingSchema', () => {
-    it('requires partner names', () => {
-      const result = createWeddingSchema.safeParse({
-        partner1_name: '',
-        partner2_name: '',
+  describe('createEventSchema', () => {
+    it('requires event name and organizer name', () => {
+      const result = createEventSchema.safeParse({
+        event_name: '',
+        organizer_name: '',
       })
       expect(result.success).toBe(false)
     })
 
-    it('accepts valid wedding data', () => {
+    it('accepts valid event data', () => {
       const tomorrow = new Date()
       tomorrow.setDate(tomorrow.getDate() + 1)
       const tomorrowStr = tomorrow.toISOString().split('T')[0]
 
-      const result = createWeddingSchema.safeParse({
-        partner1_name: 'Alice',
-        partner2_name: 'Bob',
-        wedding_date: tomorrowStr,
+      const result = createEventSchema.safeParse({
+        event_name: 'Summer Festival',
+        organizer_name: 'Music Productions GmbH',
+        event_date: tomorrowStr,
         guest_count_estimate: 150,
       })
       expect(result.success).toBe(true)
@@ -579,7 +579,7 @@ describe('Other Schemas', () => {
     it('accepts valid task data', () => {
       const result = createTaskSchema.safeParse({
         title: 'Book photographer',
-        description: 'Research and book a wedding photographer',
+        description: 'Research and book an event photographer',
         category: 'photography',
         priority: 'high',
       })
