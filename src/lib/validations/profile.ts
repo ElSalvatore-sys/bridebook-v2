@@ -5,6 +5,7 @@
 
 import { z } from 'zod'
 import type { Enums } from '@/types/database'
+import { germanPhoneSchema, urlSchema } from './common'
 
 /**
  * Profile role type from database
@@ -26,8 +27,8 @@ export const updateProfileSchema = z.object({
     .min(1, 'Last name is required')
     .max(100, 'Last name must be 100 characters or less')
     .optional(),
-  avatar_url: z.string().url('Invalid URL').nullish(),
-  phone: z.string().max(20, 'Phone must be 20 characters or less').nullish(),
+  avatar_url: urlSchema,
+  phone: germanPhoneSchema,
 })
 
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>
