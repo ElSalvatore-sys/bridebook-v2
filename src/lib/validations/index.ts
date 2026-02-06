@@ -72,6 +72,9 @@ export {
   type VendorReviewInput,
 } from './vendor'
 
+// Messaging
+export { sendMessageSchema, type SendMessageInput } from './messaging'
+
 // Planning
 export {
   createTaskSchema,

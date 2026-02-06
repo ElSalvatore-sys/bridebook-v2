@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Calendar, MapPin, Music } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
+import { Calendar, MapPin, Music, MessageSquare } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,7 +15,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { BookingStatusBadge } from './BookingStatusBadge'
-import { useUpdateBookingStatus } from '@/hooks/queries'
+import { useUpdateBookingStatus, useGetOrCreateThread } from '@/hooks/queries'
 import type { BookingWithDetails } from '@/services'
 
 interface BookingCardProps {
@@ -24,9 +25,24 @@ interface BookingCardProps {
 
 export function BookingCard({ booking, viewType }: BookingCardProps) {
   const updateStatus = useUpdateBookingStatus()
+  const getOrCreateThread = useGetOrCreateThread()
+  const navigate = useNavigate()
   const [declineOpen, setDeclineOpen] = useState(false)
 
   const isPending = booking.status === 'PENDING'
+
+  const otherProfileId =
+    viewType === 'fan'
+      ? (booking.artists?.profile_id ?? booking.venues?.profile_id)
+      : booking.requester?.id
+
+  const handleMessage = () => {
+    if (!otherProfileId) return
+    getOrCreateThread.mutate(
+      { otherUserId: otherProfileId, bookingRequestId: booking.id },
+      { onSuccess: (thread) => navigate(`/messages/${thread.id}`) }
+    )
+  }
   const counterparty =
     viewType === 'fan'
       ? booking.artists?.stage_name ?? booking.venues?.venue_name ?? 'Unknown'
@@ -84,6 +100,18 @@ export function BookingCard({ booking, viewType }: BookingCardProps) {
         {descriptionPreview && (
           <p className="text-sm text-muted-foreground">{descriptionPreview}</p>
         )}
+
+        {/* Message button */}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleMessage}
+          disabled={!otherProfileId || getOrCreateThread.isPending}
+          data-testid="booking-message"
+        >
+          <MessageSquare className="mr-1 h-3.5 w-3.5" />
+          Message
+        </Button>
 
         {/* Actions */}
         {isPending && (

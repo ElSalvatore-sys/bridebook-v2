@@ -12,6 +12,8 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUIStore } from '@/stores'
+import { useUnreadCount } from '@/hooks/queries'
+import { Badge } from '@/components/ui/badge'
 import {
   Sheet,
   SheetContent,
@@ -31,6 +33,7 @@ const navItems = [
 function SidebarContent() {
   const location = useLocation()
   const setSidebarOpen = useUIStore((s) => s.setSidebarOpen)
+  const { data: unreadCount } = useUnreadCount()
 
   return (
     <div className="flex flex-col h-full" data-testid="sidebar">
@@ -53,6 +56,11 @@ function SidebarContent() {
             >
               <Icon className="h-4 w-4" />
               {label}
+              {name === 'messages' && (unreadCount ?? 0) > 0 && (
+                <Badge variant="default" className="ml-auto h-5 min-w-5 px-1 text-xs">
+                  {(unreadCount ?? 0) > 99 ? '99+' : unreadCount}
+                </Badge>
+              )}
             </Link>
           )
         })}

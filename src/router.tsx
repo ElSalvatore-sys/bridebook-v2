@@ -43,6 +43,12 @@ const FavoritesPage = lazy(() =>
 const BookingsPage = lazy(() =>
   import('@/pages/BookingsPage').then((m) => ({ default: m.BookingsPage }))
 )
+const MessagesPage = lazy(() =>
+  import('@/pages/MessagesPage').then((m) => ({ default: m.MessagesPage }))
+)
+const ThreadDetailPage = lazy(() =>
+  import('@/pages/ThreadDetailPage').then((m) => ({ default: m.ThreadDetailPage }))
+)
 
 // Wrapper for lazy-loaded components
 function LazyPage({ children }: { children: React.ReactNode }) {
@@ -182,6 +188,22 @@ export const router = createBrowserRouter([
             element: (
               <LazyPage>
                 <BookingsPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'messages',
+            element: (
+              <LazyPage>
+                <MessagesPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'messages/:threadId',
+            element: (
+              <LazyPage>
+                <ThreadDetailPage />
               </LazyPage>
             ),
           },

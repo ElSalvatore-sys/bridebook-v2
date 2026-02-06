@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { AlertCircle, DollarSign, Clock, Wrench } from 'lucide-react'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
@@ -17,7 +17,7 @@ import {
   ReviewsPlaceholder,
   SimilarEntities,
 } from '@/components/detail'
-import { useArtist, useVenueByProfile } from '@/hooks/queries'
+import { useArtist, useVenueByProfile, useGetOrCreateThread } from '@/hooks/queries'
 import { useAuth } from '@/context/AuthContext'
 import { useUIStore } from '@/stores'
 
@@ -28,6 +28,16 @@ export function ArtistDetailPage() {
   const { profile } = useAuth()
   const { data: userVenue } = useVenueByProfile(profile?.id ?? '')
   const openModal = useUIStore((s) => s.openModal)
+  const navigate = useNavigate()
+  const getOrCreateThread = useGetOrCreateThread()
+
+  const handleMessageClick = () => {
+    if (!artist?.profile_id) return
+    getOrCreateThread.mutate(
+      { otherUserId: artist.profile_id },
+      { onSuccess: (thread) => navigate(`/messages/${thread.id}`) }
+    )
+  }
 
   const handleBookingClick = () => {
     openModal('booking-request', {
@@ -183,6 +193,7 @@ export function ArtistDetailPage() {
                   spotify={artist.spotify}
                   website={artist.website}
                   onBookingClick={handleBookingClick}
+                  onMessageClick={handleMessageClick}
                 />
               </CardContent>
             </Card>

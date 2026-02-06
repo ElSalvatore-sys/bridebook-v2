@@ -1,4 +1,4 @@
-import { Globe, Instagram, Music2, Headphones, Mail } from 'lucide-react'
+import { Globe, Instagram, Music2, Headphones, Mail, MessageSquare } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface ContactInfoProps {
@@ -7,6 +7,7 @@ interface ContactInfoProps {
   spotify?: string | null
   website?: string | null
   onBookingClick?: () => void
+  onMessageClick?: () => void
 }
 
 const SOCIAL_LINKS = [
@@ -22,6 +23,7 @@ export function ContactInfo({
   spotify,
   website,
   onBookingClick,
+  onMessageClick,
 }: ContactInfoProps) {
   const values: Record<string, string | null | undefined> = { instagram, soundcloud, spotify, website }
   const links = SOCIAL_LINKS.filter((s) => values[s.key])
@@ -49,6 +51,17 @@ export function ContactInfo({
             )
           })}
         </div>
+      )}
+      {onMessageClick && (
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={onMessageClick}
+          data-testid="message-cta"
+        >
+          <MessageSquare className="mr-2 h-4 w-4" />
+          Send Message
+        </Button>
       )}
       <Button
         className="w-full"

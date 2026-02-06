@@ -16,8 +16,8 @@ export type BookingStatus = Enums<'booking_status'>
 export type BookingRequestEvent = Tables<'booking_request_events'>
 
 export interface BookingWithDetails extends BookingRequest {
-  artists: { id: string; stage_name: string } | null
-  venues: { id: string; venue_name: string; type: string } | null
+  artists: { id: string; stage_name: string; profile_id: string } | null
+  venues: { id: string; venue_name: string; type: string; profile_id: string } | null
   requester: { id: string; first_name: string; last_name: string } | null
 }
 
@@ -89,8 +89,8 @@ export class BookingService {
       .select(
         `
         *,
-        artists (id, stage_name),
-        venues (id, venue_name, type),
+        artists (id, stage_name, profile_id),
+        venues (id, venue_name, type, profile_id),
         requester:profiles!booking_requests_requester_id_fkey (id, first_name, last_name)
       `
       )
@@ -141,8 +141,8 @@ export class BookingService {
       .select(
         `
         *,
-        artists (id, stage_name),
-        venues (id, venue_name, type),
+        artists (id, stage_name, profile_id),
+        venues (id, venue_name, type, profile_id),
         requester:profiles!booking_requests_requester_id_fkey (id, first_name, last_name)
       `
       )
@@ -172,8 +172,8 @@ export class BookingService {
       .select(
         `
         *,
-        artists (id, stage_name),
-        venues (id, venue_name, type),
+        artists (id, stage_name, profile_id),
+        venues (id, venue_name, type, profile_id),
         requester:profiles!booking_requests_requester_id_fkey (id, first_name, last_name),
         booking_request_events (*)
       `

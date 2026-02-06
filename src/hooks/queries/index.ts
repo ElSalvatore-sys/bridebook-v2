@@ -63,6 +63,16 @@ export {
   useUpdateBookingStatus,
 } from './use-booking'
 
+// Messaging hooks and keys
+export {
+  messagingKeys,
+  useThreads,
+  useThread,
+  useSendMessage,
+  useUnreadCount,
+  useGetOrCreateThread,
+} from './use-messaging'
+
 // Vendor search hooks
 export {
   vendorSearchKeys,

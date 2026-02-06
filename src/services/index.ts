@@ -43,6 +43,15 @@ export {
   type BookingRequestEvent,
 } from './booking'
 
+export {
+  MessagingService,
+  type MessageThread,
+  type Message,
+  type ThreadWithDetails,
+  type ThreadDetail,
+  type ThreadParticipant,
+} from './messaging'
+
 export { AvailabilityService, type Availability } from './availability'
 
 export { GenreService, type Genre } from './genres'
