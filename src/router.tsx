@@ -25,6 +25,12 @@ const AuthCallbackPage = lazy(() =>
 const DashboardPage = lazy(() =>
   import('@/pages/DashboardPage').then((m) => ({ default: m.DashboardPage }))
 )
+const ArtistsPage = lazy(() =>
+  import('@/pages/discovery/ArtistsPage').then((m) => ({ default: m.ArtistsPage }))
+)
+const VenuesPage = lazy(() =>
+  import('@/pages/discovery/VenuesPage').then((m) => ({ default: m.VenuesPage }))
+)
 
 // Wrapper for lazy-loaded components
 function LazyPage({ children }: { children: React.ReactNode }) {
@@ -116,6 +122,22 @@ export const router = createBrowserRouter([
             element: (
               <LazyPage>
                 <DashboardPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'artists',
+            element: (
+              <LazyPage>
+                <ArtistsPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'venues',
+            element: (
+              <LazyPage>
+                <VenuesPage />
               </LazyPage>
             ),
           },

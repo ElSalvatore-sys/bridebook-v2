@@ -55,3 +55,11 @@ export {
   getTotalCount,
   flattenPages,
 } from './use-vendor-search'
+
+// Reference data hooks
+export { genreKeys, useGenres } from './use-genres'
+export { amenityKeys, useAmenities } from './use-amenities'
+export { locationKeys, useCities, useRegions } from './use-locations'
+
+// Discovery hooks
+export { discoveryKeys, useDiscoverArtists, useDiscoverVenues } from './use-discovery'

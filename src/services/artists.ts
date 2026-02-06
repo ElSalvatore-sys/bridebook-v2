@@ -34,6 +34,29 @@ interface ListOptions {
   genreId?: string
 }
 
+export type SortOption = 'relevance' | 'price_low' | 'price_high' | 'rating' | 'newest'
+
+export interface ArtistDiscoverOptions {
+  searchQuery?: string
+  genreIds?: string[]
+  priceMin?: number
+  priceMax?: number
+  sortBy?: SortOption
+  limit?: number
+  offset?: number
+}
+
+export interface ArtistDiscoverResult {
+  id: string
+  stage_name: string
+  bio: string | null
+  hourly_rate: number | null
+  years_experience: number | null
+  has_equipment: boolean
+  primary_image_url: string | null
+  genre_names: string[]
+}
+
 export class ArtistService {
   /**
    * Create a new artist profile
@@ -197,5 +220,99 @@ export class ArtistService {
 
     if (error) handleSupabaseError(error)
     return { data: data ?? [], count }
+  }
+
+  /**
+   * Discover artists with full filtering, sorting, and pagination
+   */
+  static async discover(
+    options?: ArtistDiscoverOptions
+  ): Promise<PaginatedResult<ArtistDiscoverResult>> {
+    const limit = options?.limit ?? 20
+    const offset = options?.offset ?? 0
+
+    const hasGenreFilter = options?.genreIds && options.genreIds.length > 0
+
+    const selectString = hasGenreFilter
+      ? `
+        id, stage_name, bio, hourly_rate, years_experience, has_equipment, created_at,
+        artist_media!left (url, is_primary),
+        artist_genres!inner (genre_id, genres (name))
+      `
+      : `
+        id, stage_name, bio, hourly_rate, years_experience, has_equipment, created_at,
+        artist_media!left (url, is_primary),
+        artist_genres!left (genre_id, genres (name))
+      `
+
+    let query = supabase
+      .from('artists')
+      .select(selectString, { count: 'exact' })
+      .is('deleted_at', null)
+      .eq('is_public', true)
+
+    // Search by stage name
+    if (options?.searchQuery) {
+      query = query.ilike('stage_name', `%${options.searchQuery}%`)
+    }
+
+    // Filter by genres
+    if (hasGenreFilter) {
+      query = query.in('artist_genres.genre_id', options!.genreIds!)
+    }
+
+    // Price range filter
+    if (options?.priceMin !== undefined) {
+      query = query.gte('hourly_rate', options.priceMin)
+    }
+    if (options?.priceMax !== undefined) {
+      query = query.lte('hourly_rate', options.priceMax)
+    }
+
+    // Sorting
+    switch (options?.sortBy) {
+      case 'price_low':
+        query = query.order('hourly_rate', { ascending: true, nullsFirst: false })
+        break
+      case 'price_high':
+        query = query.order('hourly_rate', { ascending: false, nullsFirst: false })
+        break
+      case 'newest':
+        query = query.order('created_at', { ascending: false })
+        break
+      default:
+        query = query.order('created_at', { ascending: false })
+    }
+
+    // Pagination
+    query = query.range(offset, offset + limit - 1)
+
+    const { data, error, count } = await query
+
+    if (error) handleSupabaseError(error)
+
+    // Transform to ArtistDiscoverResult
+    const results: ArtistDiscoverResult[] = (data ?? []).map((artist: Record<string, unknown>) => {
+      const media = artist.artist_media as Array<{ url: string; is_primary: boolean }> | null
+      const primaryMedia = media?.find((m) => m.is_primary)
+
+      const genreJoins = artist.artist_genres as Array<{ genres: { name: string } | null }> | null
+      const genreNames = genreJoins
+        ?.map((g) => g.genres?.name)
+        .filter((n): n is string => !!n) ?? []
+
+      return {
+        id: artist.id as string,
+        stage_name: artist.stage_name as string,
+        bio: artist.bio as string | null,
+        hourly_rate: artist.hourly_rate as number | null,
+        years_experience: artist.years_experience as number | null,
+        has_equipment: artist.has_equipment as boolean,
+        primary_image_url: primaryMedia?.url ?? null,
+        genre_names: [...new Set(genreNames)],
+      }
+    })
+
+    return { data: results, count }
   }
 }

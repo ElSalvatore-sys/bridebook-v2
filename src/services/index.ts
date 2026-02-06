@@ -12,6 +12,8 @@ export {
   type ArtistWithDetails,
   type ArtistGenre,
   type ArtistMedia,
+  type ArtistDiscoverOptions,
+  type ArtistDiscoverResult,
 } from './artists'
 
 export {
@@ -21,6 +23,8 @@ export {
   type VenueType,
   type VenueAmenity,
   type VenueMedia,
+  type VenueDiscoverOptions,
+  type VenueDiscoverResult,
 } from './venues'
 
 export {
@@ -29,3 +33,14 @@ export {
   type FavoriteWithVendor,
   type FavoriteType,
 } from './favorites'
+
+export { GenreService, type Genre } from './genres'
+
+export { AmenityService, type Amenity } from './amenities'
+
+export {
+  LocationService,
+  type City,
+  type Region,
+  type CityWithRegion,
+} from './locations'
