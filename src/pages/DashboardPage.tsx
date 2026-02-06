@@ -5,8 +5,9 @@ import {
   MessageSquare,
   Plus,
   TrendingUp,
+  AlertCircle,
 } from 'lucide-react'
-import { useAuth } from '@/hooks'
+import { useCurrentProfile } from '@/hooks'
 import { PageHeader } from '@/components/ui/page-header'
 import {
   Card,
@@ -16,6 +17,8 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 
 const stats = [
   {
@@ -62,8 +65,45 @@ const quickActions = [
   { name: 'find-venues', label: 'Find Venues', icon: MapPin },
 ]
 
+function DashboardSkeleton() {
+  return (
+    <div data-testid="dashboard-loading" className="space-y-6">
+      <div className="h-16 bg-muted animate-pulse rounded-lg" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {[...Array(4)].map((_, i) => (
+          <div key={i} className="h-28 bg-muted animate-pulse rounded-lg" />
+        ))}
+      </div>
+      <div className="flex items-center justify-center py-8">
+        <LoadingSpinner size="lg" />
+      </div>
+    </div>
+  )
+}
+
 export function DashboardPage() {
-  const { profile } = useAuth()
+  const { data: profile, isLoading, isError, error } = useCurrentProfile()
+
+  // Loading state
+  if (isLoading) {
+    return <DashboardSkeleton />
+  }
+
+  // Error state - show recoverable UI
+  if (isError) {
+    return (
+      <div data-testid="dashboard" className="space-y-6">
+        <PageHeader title="Dashboard" description="Welcome back" />
+        <Alert variant="destructive">
+          <AlertCircle className="h-4 w-4" />
+          <AlertTitle>Failed to load profile</AlertTitle>
+          <AlertDescription>
+            {error?.message ?? 'Please try again'}
+          </AlertDescription>
+        </Alert>
+      </div>
+    )
+  }
 
   return (
     <div data-testid="dashboard" className="space-y-6">

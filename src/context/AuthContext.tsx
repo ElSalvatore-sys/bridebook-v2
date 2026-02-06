@@ -9,6 +9,7 @@ import {
 import type { User, Session, AuthError } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 import { supabase } from '@/services/supabase'
+import { queryClient } from '@/lib/query-client'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
@@ -171,6 +172,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(null)
     setSession(null)
     setProfile(null)
+
+    // Clear React Query cache
+    queryClient.clear()
 
     // Use scope:'local' to clear localStorage without a network call (can't hang)
     try {
