@@ -68,6 +68,13 @@ export {
 export { StorageService, type StorageBucket } from './storage'
 
 export {
+  SearchService,
+  type ArtistSearchResult,
+  type VenueSearchResult,
+  type CombinedSearchResults,
+} from './search'
+
+export {
   MediaService,
   type MediaTable,
   type ArtistMedia as ArtistMediaRecord,

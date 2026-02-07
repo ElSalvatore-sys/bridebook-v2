@@ -91,6 +91,14 @@ export { locationKeys, useCities, useRegions } from './use-locations'
 // Discovery hooks
 export { discoveryKeys, useDiscoverArtists, useDiscoverVenues } from './use-discovery'
 
+// Search hooks
+export {
+  searchKeys,
+  useSearchArtistsRpc,
+  useSearchVenuesRpc,
+  useGlobalSearch,
+} from './use-search'
+
 // Media hooks
 export {
   mediaKeys,

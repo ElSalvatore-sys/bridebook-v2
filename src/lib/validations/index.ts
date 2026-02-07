@@ -85,6 +85,18 @@ export {
   type CreateMediaRecordInput,
 } from './media'
 
+// Search
+export {
+  searchQuerySchema,
+  searchTypeSchema,
+  artistSearchFilterSchema,
+  venueSearchFilterSchema,
+  type SearchQuery,
+  type SearchType,
+  type ArtistSearchFilters as ArtistSearchFilterInput,
+  type VenueSearchFilters as VenueSearchFilterInput,
+} from './search'
+
 // Planning
 export {
   createTaskSchema,

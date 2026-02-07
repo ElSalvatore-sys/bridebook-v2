@@ -7,30 +7,10 @@ export type Json =
   | Json[]
 
 export type Database = {
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
+  // Allows to automatically instantiate createClient with right options
+  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
+  __InternalSupabase: {
+    PostgrestVersion: "14.1"
   }
   public: {
     Tables: {
@@ -932,6 +912,45 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      search_artists: {
+        Args: {
+          filters?: Json
+          result_limit?: number
+          result_offset?: number
+          search_query: string
+        }
+        Returns: {
+          bio: string
+          genre_names: string[]
+          has_equipment: boolean
+          hourly_rate: number
+          id: string
+          primary_image_url: string
+          rank: number
+          stage_name: string
+          years_experience: number
+        }[]
+      }
+      search_venues: {
+        Args: {
+          filters?: Json
+          result_limit?: number
+          result_offset?: number
+          search_query: string
+        }
+        Returns: {
+          amenity_names: string[]
+          capacity_max: number
+          capacity_min: number
+          city_name: string
+          description: string
+          id: string
+          primary_image_url: string
+          rank: number
+          type: Database["public"]["Enums"]["venue_type"]
+          venue_name: string
+        }[]
+      }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
     }
@@ -1078,9 +1097,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       booking_status: [
@@ -1105,4 +1121,3 @@ export const Constants = {
     },
   },
 } as const
-

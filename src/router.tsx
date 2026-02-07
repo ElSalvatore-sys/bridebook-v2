@@ -52,6 +52,9 @@ const ThreadDetailPage = lazy(() =>
 const SettingsPage = lazy(() =>
   import('@/pages/SettingsPage').then((m) => ({ default: m.SettingsPage }))
 )
+const SearchPage = lazy(() =>
+  import('@/pages/SearchPage').then((m) => ({ default: m.SearchPage }))
+)
 
 // Wrapper for lazy-loaded components
 function LazyPage({ children }: { children: React.ReactNode }) {
@@ -207,6 +210,14 @@ export const router = createBrowserRouter([
             element: (
               <LazyPage>
                 <ThreadDetailPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'search',
+            element: (
+              <LazyPage>
+                <SearchPage />
               </LazyPage>
             ),
           },

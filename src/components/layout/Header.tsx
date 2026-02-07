@@ -1,9 +1,10 @@
-import { Link } from 'react-router-dom'
-import { Menu, LogOut, Settings } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Menu, LogOut, Settings, Search } from 'lucide-react'
 import { useAuth } from '@/hooks'
 import { useCurrentProfile } from '@/hooks/queries'
 import { useUIStore } from '@/stores'
 import { ThemeToggle } from '@/components/theme/ThemeToggle'
+import { GlobalSearchBar } from '@/components/search/SearchBar'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
@@ -33,6 +34,7 @@ export function Header() {
   const { user, signOut } = useAuth()
   const { data: profile } = useCurrentProfile()
   const toggleSidebar = useUIStore((s) => s.toggleSidebar)
+  const navigate = useNavigate()
 
   const initials = getInitials(profile?.first_name, profile?.last_name)
   const displayName = [profile?.first_name, profile?.last_name].filter(Boolean).join(' ') || 'User'
@@ -64,8 +66,25 @@ export function Header() {
           bloghead
         </Link>
 
+        {/* Desktop search bar */}
+        <div className="hidden sm:flex flex-1 max-w-md mx-4">
+          <GlobalSearchBar />
+        </div>
+
+        {/* Mobile search icon */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="sm:hidden ml-auto"
+          onClick={() => navigate('/search')}
+          data-testid="header-search-mobile"
+        >
+          <Search className="h-5 w-5" />
+          <span className="sr-only">Search</span>
+        </Button>
+
         {/* Right side */}
-        <div className="ml-auto flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <ThemeToggle />
 
           <DropdownMenu>
