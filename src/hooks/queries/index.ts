@@ -90,3 +90,13 @@ export { locationKeys, useCities, useRegions } from './use-locations'
 
 // Discovery hooks
 export { discoveryKeys, useDiscoverArtists, useDiscoverVenues } from './use-discovery'
+
+// Media hooks
+export {
+  mediaKeys,
+  useUploadAvatar,
+  useUploadMedia,
+  useDeleteMedia,
+  useEntityMedia,
+  useSetPrimaryMedia,
+} from './use-media'

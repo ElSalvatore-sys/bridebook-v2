@@ -4,12 +4,14 @@
  */
 
 import { toast } from 'sonner'
-import { AppError } from './errors'
+import { AppError, isAbortError } from './errors'
 
 /**
  * Show an error toast with appropriate message
  */
 export function showError(error: unknown): void {
+  if (isAbortError(error)) return
+
   let message: string
 
   if (error instanceof AppError) {

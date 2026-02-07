@@ -79,9 +79,46 @@ export class NotFoundError extends AppError {
 }
 
 /**
+ * Check if an error is an AbortError (e.g. from React StrictMode cleanup)
+ * Only matches known AbortController/StrictMode patterns — NOT generic errors
+ * that happen to contain the word "abort" (e.g. "Upload aborted", "Transaction aborted")
+ */
+export function isAbortError(error: unknown): boolean {
+  if (!error) return false
+  if (error instanceof DOMException && error.name === 'AbortError') return true
+  if (error instanceof Error) {
+    const name = error.name?.toLowerCase() ?? ''
+    if (name === 'aborterror' || name === 'abort_err') return true
+    const msg = error.message?.toLowerCase() ?? ''
+    return (
+      msg === 'signal is aborted without reason' ||
+      msg === 'the operation was aborted' ||
+      msg === 'aborted' ||
+      msg === 'the user aborted a request.' ||
+      msg.startsWith('signal is aborted')
+    )
+  }
+  if (typeof error === 'object' && error !== null) {
+    const e = error as Record<string, unknown>
+    const msg = (typeof e.message === 'string' ? e.message : '').toLowerCase()
+    return (
+      msg === 'signal is aborted without reason' ||
+      msg === 'the operation was aborted' ||
+      msg === 'aborted'
+    )
+  }
+  return false
+}
+
+/**
  * Convert Supabase PostgrestError to appropriate AppError
  */
 export function handleSupabaseError(error: PostgrestError): never {
+  // Abort errors (from StrictMode cleanup) should not be treated as real errors
+  if (isAbortError(error)) {
+    throw new DOMException('The operation was aborted', 'AbortError')
+  }
+
   const { code, message } = error
 
   // PGRST116: No rows returned (single() with no match)

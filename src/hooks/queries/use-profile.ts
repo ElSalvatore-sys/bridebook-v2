@@ -11,6 +11,7 @@ import {
 import { ProfileService, type Profile, type ProfileRole } from '@/services'
 import { type UpdateProfileInput } from '@/lib/validations'
 import { showSuccess, showError } from '@/lib/toast'
+import { isAbortError } from '@/lib/errors'
 
 /**
  * Query key factory for profiles
@@ -31,6 +32,10 @@ export function useCurrentProfile(
   return useQuery({
     queryKey: profileKeys.current(),
     queryFn: () => ProfileService.getCurrent(),
+    retry: (failureCount, error) => {
+      if (isAbortError(error)) return failureCount < 2
+      return failureCount < 1
+    },
     ...options,
   })
 }

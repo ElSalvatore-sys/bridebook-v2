@@ -75,6 +75,16 @@ export {
 // Messaging
 export { sendMessageSchema, type SendMessageInput } from './messaging'
 
+// Media & file uploads
+export {
+  fileUploadSchema,
+  avatarUploadSchema,
+  mediaUploadSchema,
+  createMediaRecordSchema,
+  type FileUploadInput,
+  type CreateMediaRecordInput,
+} from './media'
+
 // Planning
 export {
   createTaskSchema,

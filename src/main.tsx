@@ -1,7 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { RouterProvider } from 'react-router-dom'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { QueryClientProvider } from '@tanstack/react-query'
+import { queryClient } from '@/lib/query-client'
+import { isAbortError } from '@/lib/errors'
 import { router } from './router'
 import './styles/globals.css'
 import './lib/sentry'
@@ -9,21 +11,9 @@ import './lib/sentry'
 // Suppress AbortError from Supabase internal promise rejections
 // (caused by React StrictMode double-mount aborting in-flight requests)
 window.addEventListener('unhandledrejection', (event) => {
-  if (
-    event.reason?.name === 'AbortError' ||
-    (event.reason instanceof Error && event.reason.message?.includes('aborted'))
-  ) {
+  if (isAbortError(event.reason)) {
     event.preventDefault()
   }
-})
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      retry: 1,
-    },
-  },
 })
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

@@ -1,10 +1,11 @@
 import { Link } from 'react-router-dom'
 import { Menu, LogOut, Settings } from 'lucide-react'
 import { useAuth } from '@/hooks'
+import { useCurrentProfile } from '@/hooks/queries'
 import { useUIStore } from '@/stores'
 import { ThemeToggle } from '@/components/theme/ThemeToggle'
 import { Button } from '@/components/ui/button'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
@@ -29,7 +30,8 @@ function getInitials(firstName?: string | null, lastName?: string | null): strin
 }
 
 export function Header() {
-  const { profile, user, signOut } = useAuth()
+  const { user, signOut } = useAuth()
+  const { data: profile } = useCurrentProfile()
   const toggleSidebar = useUIStore((s) => s.toggleSidebar)
 
   const initials = getInitials(profile?.first_name, profile?.last_name)
@@ -74,6 +76,9 @@ export function Header() {
                 data-testid="header-user-menu"
               >
                 <Avatar className="h-8 w-8">
+                  {profile?.avatar_url && (
+                    <AvatarImage src={profile.avatar_url} alt={displayName} />
+                  )}
                   <AvatarFallback className="text-xs">{initials}</AvatarFallback>
                 </Avatar>
               </Button>

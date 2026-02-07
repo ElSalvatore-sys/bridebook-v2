@@ -64,3 +64,12 @@ export {
   type Region,
   type CityWithRegion,
 } from './locations'
+
+export { StorageService, type StorageBucket } from './storage'
+
+export {
+  MediaService,
+  type MediaTable,
+  type ArtistMedia as ArtistMediaRecord,
+  type VenueMedia as VenueMediaRecord,
+} from './media'

@@ -49,6 +49,9 @@ const MessagesPage = lazy(() =>
 const ThreadDetailPage = lazy(() =>
   import('@/pages/ThreadDetailPage').then((m) => ({ default: m.ThreadDetailPage }))
 )
+const SettingsPage = lazy(() =>
+  import('@/pages/SettingsPage').then((m) => ({ default: m.SettingsPage }))
+)
 
 // Wrapper for lazy-loaded components
 function LazyPage({ children }: { children: React.ReactNode }) {
@@ -204,6 +207,14 @@ export const router = createBrowserRouter([
             element: (
               <LazyPage>
                 <ThreadDetailPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'settings',
+            element: (
+              <LazyPage>
+                <SettingsPage />
               </LazyPage>
             ),
           },

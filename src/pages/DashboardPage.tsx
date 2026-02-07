@@ -8,6 +8,7 @@ import {
   AlertCircle,
 } from 'lucide-react'
 import { useCurrentProfile } from '@/hooks'
+import { isAbortError } from '@/lib/errors'
 import { PageHeader } from '@/components/ui/page-header'
 import {
   Card,
@@ -89,8 +90,8 @@ export function DashboardPage() {
     return <DashboardSkeleton />
   }
 
-  // Error state - show recoverable UI
-  if (isError) {
+  // Error state - show recoverable UI (skip abort errors from StrictMode)
+  if (isError && !isAbortError(error)) {
     return (
       <div data-testid="dashboard" className="space-y-6">
         <PageHeader title="Dashboard" description="Welcome back" />

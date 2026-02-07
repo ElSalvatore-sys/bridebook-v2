@@ -10,6 +10,7 @@ import type { User, Session, AuthError } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 import { supabase } from '@/services/supabase'
 import { queryClient } from '@/lib/query-client'
+import { isAbortError } from '@/lib/errors'
 
 type Profile = Database['public']['Tables']['profiles']['Row']
 
@@ -69,7 +70,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (error) {
         // AbortError from StrictMode cleanup — ignore silently
-        if (error.message?.includes('aborted')) {
+        if (isAbortError(error)) {
           console.debug('[Auth] Profile fetch aborted (expected during cleanup)')
           return  // Don't set profile to null — the re-mount will fetch it
         }
@@ -83,7 +84,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setProfile(data)
     } catch (err) {
       // AbortError is expected during StrictMode cleanup — ignore silently
-      if (err instanceof Error && (err.name === 'AbortError' || err.message?.includes('aborted'))) {
+      if (isAbortError(err)) {
         console.debug('[Auth] Profile fetch aborted (expected during cleanup)')
         return
       }
@@ -112,7 +113,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         } = await supabase.auth.getSession()
 
         if (sessionError) {
-          if (sessionError.message?.includes('aborted')) {
+          if (isAbortError(sessionError)) {
             console.debug('[Auth] Session fetch aborted (expected during cleanup)')
             return
           }
@@ -129,7 +130,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
           console.log('[Auth] Profile fetched')
         }
       } catch (err) {
-        if (err instanceof Error && (err.name === 'AbortError' || err.message?.includes('aborted'))) {
+        if (isAbortError(err)) {
           console.debug('[Auth] Auth init aborted (expected during cleanup)')
           return
         }
