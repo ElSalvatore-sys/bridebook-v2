@@ -98,7 +98,7 @@ export function VenueDetailPage() {
         <BackButton />
         <div className="flex items-center gap-1">
           <ShareButton title={venue.venue_name} />
-          <FavoriteButton vendorId={venue.id} vendorType="VENUE" />
+          <FavoriteButton vendorId={venue.id} vendorType="VENUE" size="lg" />
         </div>
       </div>
 

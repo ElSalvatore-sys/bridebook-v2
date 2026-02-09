@@ -87,7 +87,7 @@ export function ArtistDetailPage() {
         <BackButton />
         <div className="flex items-center gap-1">
           <ShareButton title={artist.stage_name} />
-          <FavoriteButton vendorId={artist.id} vendorType="ARTIST" />
+          <FavoriteButton vendorId={artist.id} vendorType="ARTIST" size="lg" />
         </div>
       </div>
 
