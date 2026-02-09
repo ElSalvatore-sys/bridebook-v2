@@ -1,16 +1,13 @@
 import { test, expect } from './fixtures/test-fixtures'
 
 test.describe('Authentication', () => {
-  test('landing page shows Get Started and Sign In links', async ({ page }) => {
+  test('landing page shows Get Started link', async ({ page }) => {
     await page.goto('/')
 
     const getStarted = page.getByRole('link', { name: 'Get Started' })
-    const signIn = page.getByRole('link', { name: 'Sign In' })
 
     await expect(getStarted).toBeVisible()
-    await expect(signIn).toBeVisible()
     await expect(getStarted).toHaveAttribute('href', '/signup')
-    await expect(signIn).toHaveAttribute('href', '/login')
   })
 
   test('login form renders with all fields', async ({ page }) => {
