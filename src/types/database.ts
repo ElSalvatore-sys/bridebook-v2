@@ -844,8 +844,11 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          bio: string | null
+          city: string | null
           created_at: string
           deleted_at: string | null
+          display_name: string | null
           email: string
           first_name: string
           id: string
@@ -854,11 +857,15 @@ export type Database = {
           phone: string | null
           role: Database["public"]["Enums"]["profile_role"]
           updated_at: string
+          website: string | null
         }
         Insert: {
           avatar_url?: string | null
+          bio?: string | null
+          city?: string | null
           created_at?: string
           deleted_at?: string | null
+          display_name?: string | null
           email: string
           first_name: string
           id: string
@@ -867,11 +874,15 @@ export type Database = {
           phone?: string | null
           role?: Database["public"]["Enums"]["profile_role"]
           updated_at?: string
+          website?: string | null
         }
         Update: {
           avatar_url?: string | null
+          bio?: string | null
+          city?: string | null
           created_at?: string
           deleted_at?: string | null
+          display_name?: string | null
           email?: string
           first_name?: string
           id?: string
@@ -880,6 +891,7 @@ export type Database = {
           phone?: string | null
           role?: Database["public"]["Enums"]["profile_role"]
           updated_at?: string
+          website?: string | null
         }
         Relationships: []
       }

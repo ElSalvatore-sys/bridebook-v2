@@ -23,6 +23,7 @@ import { createArtistSchema } from '../artist'
 import { createVenueSchema } from '../venue'
 import { createEventSchema } from '../event'
 import { createTaskSchema, createGuestSchema } from '../planning'
+import { updateProfileSchema, changePasswordSchema } from '../profile'
 
 // ========== COMMON SCHEMAS ==========
 
@@ -553,6 +554,59 @@ describe('Other Schemas', () => {
         email: 'john@example.com',
         rsvp_status: 'pending',
         guest_type: 'bride_friend',
+      })
+      expect(result.success).toBe(true)
+    })
+  })
+})
+
+// ========== PROFILE SCHEMAS ==========
+
+describe('Profile Schemas', () => {
+  describe('changePasswordSchema', () => {
+    it('validates matching passwords', () => {
+      const result = changePasswordSchema.safeParse({
+        currentPassword: 'OldPass1',
+        newPassword: 'NewPass123',
+        confirmPassword: 'NewPass123',
+      })
+      expect(result.success).toBe(true)
+    })
+
+    it('rejects mismatched passwords', () => {
+      const result = changePasswordSchema.safeParse({
+        currentPassword: 'OldPass1',
+        newPassword: 'NewPass123',
+        confirmPassword: 'Different1',
+      })
+      expect(result.success).toBe(false)
+      if (!result.success) {
+        expect(result.error.issues[0].message).toBe('Passwords do not match')
+      }
+    })
+
+    it('rejects short new password', () => {
+      const result = changePasswordSchema.safeParse({
+        currentPassword: 'x',
+        newPassword: 'short',
+        confirmPassword: 'short',
+      })
+      expect(result.success).toBe(false)
+      if (!result.success) {
+        expect(
+          result.error.issues.some((i) => i.path.includes('newPassword'))
+        ).toBe(true)
+      }
+    })
+  })
+
+  describe('updateProfileSchema', () => {
+    it('allows empty optional fields', () => {
+      const result = updateProfileSchema.safeParse({
+        display_name: '',
+        bio: '',
+        city: '',
+        website: '',
       })
       expect(result.success).toBe(true)
     })

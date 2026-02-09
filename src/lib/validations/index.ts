@@ -21,7 +21,9 @@ export {
 // Profile
 export {
   updateProfileSchema,
+  changePasswordSchema,
   type UpdateProfileInput,
+  type ChangePasswordInput,
   type ProfileRole,
 } from './profile'
 

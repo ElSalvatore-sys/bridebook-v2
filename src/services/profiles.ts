@@ -89,6 +89,52 @@ export class ProfileService {
   }
 
   /**
+   * Change the current user's password
+   * Verifies current password first via signInWithPassword, then updates
+   */
+  static async changePassword(
+    currentPassword: string,
+    newPassword: string
+  ): Promise<void> {
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser()
+
+    if (authError || !user || !user.email) {
+      throw new UnauthorizedError('Not authenticated')
+    }
+
+    // Verify current password by attempting sign-in
+    // Note: signInWithPassword refreshes auth tokens and triggers onAuthStateChange,
+    // but since it's the same user the listener just redundantly re-fetches the profile
+    const { error: verifyError } = await supabase.auth.signInWithPassword({
+      email: user.email,
+      password: currentPassword,
+    })
+
+    if (verifyError) {
+      throw new Error('Current password is incorrect')
+    }
+
+    // Update to new password
+    const { error: updateError } = await supabase.auth.updateUser({
+      password: newPassword,
+    })
+
+    if (updateError) throw updateError
+  }
+
+  /**
+   * Request account deletion
+   * MVP: Signs out the user. Real deletion requires an Edge Function
+   * with service_role key (Phase 16)
+   */
+  static async requestAccountDeletion(): Promise<void> {
+    await supabase.auth.signOut({ scope: 'local' })
+  }
+
+  /**
    * Get profiles by role with pagination
    */
   static async getByRole(

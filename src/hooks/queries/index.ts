@@ -9,6 +9,8 @@ export {
   useProfile,
   useProfilesByRole,
   useUpdateProfile,
+  useChangePassword,
+  useDeleteAccount,
 } from './use-profile'
 
 // Artist hooks and keys

@@ -10,6 +10,7 @@ import {
 } from '@tanstack/react-query'
 import { ProfileService, type Profile, type ProfileRole } from '@/services'
 import { type UpdateProfileInput } from '@/lib/validations'
+import { queryClient } from '@/lib/query-client'
 import { showSuccess, showError } from '@/lib/toast'
 import { isAbortError } from '@/lib/errors'
 
@@ -78,15 +79,52 @@ export function useProfilesByRole(
  * Hook to update the current user's profile
  */
 export function useUpdateProfile() {
-  const queryClient = useQueryClient()
+  const qc = useQueryClient()
 
   return useMutation({
     mutationFn: (input: UpdateProfileInput) => ProfileService.update(input),
     onSuccess: (data) => {
       // Invalidate and refetch current profile
-      queryClient.invalidateQueries({ queryKey: profileKeys.current() })
-      queryClient.invalidateQueries({ queryKey: profileKeys.detail(data.id) })
+      qc.invalidateQueries({ queryKey: profileKeys.current() })
+      qc.invalidateQueries({ queryKey: profileKeys.detail(data.id) })
       showSuccess('Profile updated successfully')
+    },
+    onError: (error) => {
+      showError(error)
+    },
+  })
+}
+
+/**
+ * Hook to change user's password
+ */
+export function useChangePassword() {
+  return useMutation({
+    mutationFn: ({
+      currentPassword,
+      newPassword,
+    }: {
+      currentPassword: string
+      newPassword: string
+    }) => ProfileService.changePassword(currentPassword, newPassword),
+    onSuccess: () => {
+      showSuccess('Password changed successfully')
+    },
+    onError: (error) => {
+      showError(error)
+    },
+  })
+}
+
+/**
+ * Hook to request account deletion
+ */
+export function useDeleteAccount() {
+  return useMutation({
+    mutationFn: () => ProfileService.requestAccountDeletion(),
+    onSuccess: () => {
+      queryClient.clear()
+      window.location.href = '/login'
     },
     onError: (error) => {
       showError(error)

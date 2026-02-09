@@ -136,4 +136,49 @@ describe('ProfileService', () => {
       expect(builder.range).toHaveBeenCalledWith(10, 14)
     })
   })
+
+  describe('changePassword', () => {
+    it('calls signInWithPassword then updateUser', async () => {
+      mocks.mockAuth.getUser.mockResolvedValue({
+        data: { user: { id: 'user-123', email: 'test@example.com' } },
+        error: null,
+      })
+      mocks.mockAuth.signInWithPassword.mockResolvedValue({ error: null })
+      mocks.mockAuth.updateUser.mockResolvedValue({ error: null })
+
+      await ProfileService.changePassword('old', 'NewPass123')
+
+      expect(mocks.mockAuth.signInWithPassword).toHaveBeenCalledWith({
+        email: 'test@example.com',
+        password: 'old',
+      })
+      expect(mocks.mockAuth.updateUser).toHaveBeenCalledWith({
+        password: 'NewPass123',
+      })
+    })
+
+    it('throws when current password is wrong', async () => {
+      mocks.mockAuth.getUser.mockResolvedValue({
+        data: { user: { id: 'user-123', email: 'test@example.com' } },
+        error: null,
+      })
+      mocks.mockAuth.signInWithPassword.mockResolvedValue({
+        error: { message: 'Invalid credentials' },
+      })
+
+      await expect(
+        ProfileService.changePassword('wrong', 'NewPass123')
+      ).rejects.toThrow('Current password is incorrect')
+    })
+  })
+
+  describe('requestAccountDeletion', () => {
+    it('calls signOut', async () => {
+      mocks.mockAuth.signOut.mockResolvedValue({ error: null })
+
+      await ProfileService.requestAccountDeletion()
+
+      expect(mocks.mockAuth.signOut).toHaveBeenCalledWith({ scope: 'local' })
+    })
+  })
 })
