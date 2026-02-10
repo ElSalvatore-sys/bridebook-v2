@@ -4,8 +4,8 @@
  */
 
 import { useEffect } from 'react'
-import { useSearchParams } from 'react-router-dom'
-import { AlertCircle, Globe, KeyRound, Mail, Trash2, User } from 'lucide-react'
+import { Link, useSearchParams } from 'react-router-dom'
+import { AlertCircle, Globe, Image, KeyRound, Mail, Trash2, User } from 'lucide-react'
 import {
   useCurrentProfile,
   useUpdateProfile,
@@ -340,6 +340,26 @@ export function SettingsPage() {
               </form>
             </CardContent>
           </Card>
+
+          {/* Gallery Photos link (ARTIST/VENUE only) */}
+          {(profile?.role === 'ARTIST' || profile?.role === 'VENUE') && (
+            <Card data-testid="gallery-photos-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Image className="h-5 w-5" />
+                  Gallery Photos
+                </CardTitle>
+                <CardDescription>
+                  Manage the photos displayed on your public profile
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button asChild variant="outline" data-testid="gallery-photos-link">
+                  <Link to="/media">Manage your photos</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         {/* ──── Account Tab ──── */}

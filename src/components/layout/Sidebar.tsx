@@ -9,11 +9,13 @@ import {
   CalendarCheck,
   MessageSquare,
   Settings,
+  Image,
   HelpCircle,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUIStore } from '@/stores'
 import { useUnreadCount } from '@/hooks/queries'
+import { useAuth } from '@/hooks/useAuth'
 import { Badge } from '@/components/ui/badge'
 import {
   Sheet,
@@ -36,11 +38,21 @@ function SidebarContent() {
   const location = useLocation()
   const setSidebarOpen = useUIStore((s) => s.setSidebarOpen)
   const { data: unreadCount } = useUnreadCount()
+  const { profile } = useAuth()
+
+  const isOwnerRole = profile?.role === 'ARTIST' || profile?.role === 'VENUE'
+
+  const allNavItems = [
+    ...navItems,
+    ...(isOwnerRole
+      ? [{ name: 'media', label: 'My Photos', icon: Image, href: '/media' }]
+      : []),
+  ]
 
   return (
     <div className="flex flex-col h-full" data-testid="sidebar">
       <nav className="flex-1 space-y-1 p-4" data-testid="sidebar-nav">
-        {navItems.map(({ name, label, icon: Icon, href }) => {
+        {allNavItems.map(({ name, label, icon: Icon, href }) => {
           const isActive = location.pathname === href
 
           return (
