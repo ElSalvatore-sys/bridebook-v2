@@ -61,6 +61,9 @@ const SearchPage = lazy(() =>
 const MediaManagerPage = lazy(() =>
   import('@/pages/MediaManagerPage').then((m) => ({ default: m.MediaManagerPage }))
 )
+const NotificationsPage = lazy(() =>
+  import('@/pages/NotificationsPage').then((m) => ({ default: m.NotificationsPage }))
+)
 
 // Wrapper for lazy-loaded components
 function LazyPage({ children }: { children: React.ReactNode }) {
@@ -240,6 +243,14 @@ export const router = createBrowserRouter([
             element: (
               <LazyPage>
                 <SettingsPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'notifications',
+            element: (
+              <LazyPage>
+                <NotificationsPage />
               </LazyPage>
             ),
           },

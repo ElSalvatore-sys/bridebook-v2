@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard,
+  Bell,
   Calendar,
   Music,
   MapPin,
@@ -14,7 +15,7 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUIStore } from '@/stores'
-import { useUnreadCount } from '@/hooks/queries'
+import { useUnreadCount, useNotificationUnreadCount } from '@/hooks/queries'
 import { useAuth } from '@/hooks/useAuth'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -24,6 +25,7 @@ import {
 
 const navItems = [
   { name: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
+  { name: 'notifications', label: 'Notifications', icon: Bell, href: '/notifications' },
   { name: 'events', label: 'Events', icon: Calendar, href: '/events' },
   { name: 'artists', label: 'Artists', icon: Music, href: '/artists' },
   { name: 'venues', label: 'Venues', icon: MapPin, href: '/venues' },
@@ -38,6 +40,7 @@ function SidebarContent() {
   const location = useLocation()
   const setSidebarOpen = useUIStore((s) => s.setSidebarOpen)
   const { data: unreadCount } = useUnreadCount()
+  const { data: notifUnreadCount } = useNotificationUnreadCount()
   const { profile } = useAuth()
 
   const isOwnerRole = profile?.role === 'ARTIST' || profile?.role === 'VENUE'
@@ -70,6 +73,11 @@ function SidebarContent() {
             >
               <Icon className="h-4 w-4" />
               {label}
+              {name === 'notifications' && (notifUnreadCount ?? 0) > 0 && (
+                <Badge variant="default" className="ml-auto h-5 min-w-5 px-1 text-xs">
+                  {(notifUnreadCount ?? 0) > 99 ? '99+' : notifUnreadCount}
+                </Badge>
+              )}
               {name === 'messages' && (unreadCount ?? 0) > 0 && (
                 <Badge variant="default" className="ml-auto h-5 min-w-5 px-1 text-xs">
                   {(unreadCount ?? 0) > 99 ? '99+' : unreadCount}

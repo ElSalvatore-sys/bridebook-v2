@@ -6,6 +6,7 @@
 import { supabase } from './supabase'
 import type { Tables, TablesInsert, Enums } from '@/types/database'
 import { handleSupabaseError, UnauthorizedError } from '@/lib/errors'
+import { NotificationService } from './notifications'
 import type { ArtistDiscoverResult } from './artists'
 import type { VenueDiscoverResult, VenueType } from './venues'
 
@@ -152,6 +153,23 @@ export class FavoriteService {
       .single()
 
     if (error) handleSupabaseError(error)
+
+    // Fire-and-forget: notify the artist/venue owner
+    const table = vendorType === 'ARTIST' ? 'artists' : 'venues'
+    Promise.resolve(
+      supabase.from(table).select('profile_id').eq('id', vendorId).single()
+    ).then(({ data: entity }) => {
+      if (entity?.profile_id) {
+        NotificationService.notify({
+          user_id: entity.profile_id,
+          type: 'new_favorite',
+          title: 'New favorite',
+          body: 'Someone added you to their favorites!',
+          link: '/favorites',
+        })
+      }
+    }).catch(() => {})
+
     return data
   }
 

@@ -1,8 +1,11 @@
 import { Outlet } from 'react-router-dom'
 import { Header } from './Header'
 import { Sidebar } from './Sidebar'
+import { useRealtimeNotifications } from '@/hooks/queries/use-notifications'
 
 export function MainLayout() {
+  useRealtimeNotifications()
+
   return (
     <div className="min-h-screen bg-background">
       <Header />

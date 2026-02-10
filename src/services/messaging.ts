@@ -9,6 +9,7 @@ import { handleSupabaseError, UnauthorizedError } from '@/lib/errors'
 import { sendMessageSchema } from '@/lib/validations'
 import { EmailService } from './email'
 import { messageNewTemplate } from '@/lib/email-templates'
+import { NotificationService } from './notifications'
 
 export type MessageThread = Tables<'message_threads'>
 export type Message = Tables<'messages'>
@@ -233,6 +234,25 @@ export class MessagingService {
 
     // Send email notification to the other participant (fire-and-forget)
     this.sendMessageEmail(threadId, user.id, validated.content).catch(() => {})
+
+    // Fire-and-forget: in-app notification to recipient
+    Promise.resolve(
+      supabase.from('message_threads').select('participant_one_id, participant_two_id').eq('id', threadId).single()
+    ).then(({ data: thread }) => {
+      if (thread) {
+        const recipientId =
+          thread.participant_one_id === user.id
+            ? thread.participant_two_id
+            : thread.participant_one_id
+        NotificationService.notify({
+          user_id: recipientId,
+          type: 'message_received',
+          title: 'New message',
+          body: validated.content.slice(0, 100),
+          link: `/messages/${threadId}`,
+        })
+      }
+    }).catch(() => {})
 
     return data
   }

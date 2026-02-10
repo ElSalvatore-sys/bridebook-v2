@@ -6,6 +6,7 @@
 import { supabase } from './supabase'
 import { handleSupabaseError, UnauthorizedError } from '@/lib/errors'
 import type { CreateEnquiryInput } from '@/lib/validations'
+import { NotificationService } from './notifications'
 
 export type EnquiryStatus = 'PENDING' | 'READ' | 'RESPONDED' | 'ARCHIVED'
 
@@ -64,6 +65,26 @@ export class EnquiryService {
       .single()
 
     if (error) handleSupabaseError(error)
+
+    // Fire-and-forget: notify the artist/venue owner
+    const entityId = input.entity_type === 'ARTIST' ? input.artist_id : input.venue_id
+    const table = input.entity_type === 'ARTIST' ? 'artists' : 'venues'
+    if (entityId) {
+      Promise.resolve(
+        supabase.from(table).select('profile_id').eq('id', entityId).single()
+      ).then(({ data: entity }) => {
+        if (entity?.profile_id) {
+          NotificationService.notify({
+            user_id: entity.profile_id,
+            type: 'enquiry_received',
+            title: 'New enquiry received',
+            body: `${input.name} sent you a ${input.enquiry_type.toLowerCase()} enquiry`,
+            link: '/enquiries',
+          })
+        }
+      }).catch(() => {})
+    }
+
     return data as Enquiry
   }
 

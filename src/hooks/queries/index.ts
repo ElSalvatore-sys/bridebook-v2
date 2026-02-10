@@ -126,3 +126,13 @@ export {
   useEmailPreferences,
   useUpdateEmailPreferences,
 } from './use-email-preferences'
+
+// Notification hooks and keys
+export {
+  notificationKeys,
+  useNotifications,
+  useNotificationUnreadCount,
+  useMarkNotificationRead,
+  useMarkAllNotificationsRead,
+  useRealtimeNotifications,
+} from './use-notifications'

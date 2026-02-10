@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks'
 import { useCurrentProfile } from '@/hooks/queries'
 import { useUIStore } from '@/stores'
 import { ThemeToggle } from '@/components/theme/ThemeToggle'
+import { NotificationBell } from '@/components/notifications/NotificationBell'
 import { GlobalSearchBar } from '@/components/search/SearchBar'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
@@ -86,6 +87,7 @@ export function Header() {
         {/* Right side */}
         <div className="flex items-center gap-2">
           <ThemeToggle />
+          <NotificationBell />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

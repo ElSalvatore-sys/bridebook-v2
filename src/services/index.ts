@@ -89,3 +89,9 @@ export {
   type EnquiryStatus,
   type EnquiryWithDetails,
 } from './enquiries'
+
+export {
+  NotificationService,
+  type Notification,
+  type NotificationType,
+} from './notifications'

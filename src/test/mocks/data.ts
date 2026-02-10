@@ -167,6 +167,18 @@ export const mockMediaRecord = {
   created_at: '2024-01-01T00:00:00Z',
 }
 
+export const mockNotification = {
+  id: 'notif-1',
+  user_id: 'user-123',
+  type: 'message_received' as const,
+  title: 'New message',
+  body: 'You have a new message',
+  data: {},
+  link: '/messages',
+  read_at: null,
+  created_at: '2024-01-15T10:00:00Z',
+}
+
 export const mockEnquiry = {
   id: 'enq-1',
   sender_id: 'user-123',
