@@ -22,6 +22,8 @@ import { useAuth } from '@/context/AuthContext'
 import { useCreateEnquiry } from '@/hooks/queries'
 import { useZodForm } from '@/lib/forms/use-zod-form'
 import { createEnquirySchema, type CreateEnquiryInput } from '@/lib/validations'
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit'
+import { toast } from 'sonner'
 
 interface EnquiryModalProps {
   open: boolean
@@ -84,6 +86,16 @@ export function EnquiryModal({
   }, [open, entityType, entityId, displayName, user?.email, form])
 
   const onSubmit = (data: CreateEnquiryInput) => {
+    // Check rate limit
+    const rateLimit = checkRateLimit('enquiry-send', RATE_LIMITS.ENQUIRY_SEND)
+    if (!rateLimit.allowed) {
+      toast.error(
+        'Too many enquiries',
+        { description: `Please wait ${Math.ceil(rateLimit.retryAfter / 60)} minutes before sending another enquiry` }
+      )
+      return
+    }
+
     createEnquiry.mutate(data, {
       onSuccess: () => {
         onOpenChange(false)

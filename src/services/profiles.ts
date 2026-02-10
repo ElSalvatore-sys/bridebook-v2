@@ -7,6 +7,7 @@ import { supabase } from './supabase'
 import type { Tables, TablesUpdate, Enums } from '@/types/database'
 import { handleSupabaseError, UnauthorizedError } from '@/lib/errors'
 import { updateProfileSchema, type UpdateProfileInput } from '@/lib/validations'
+import { sanitizeRichText } from '@/lib/sanitize'
 
 export type Profile = Tables<'profiles'>
 export type ProfileRole = Enums<'profile_role'>
@@ -72,8 +73,14 @@ export class ProfileService {
       throw new UnauthorizedError('Not authenticated')
     }
 
-    const updateData: TablesUpdate<'profiles'> = {
+    // Sanitize bio to prevent XSS (allow safe HTML formatting)
+    const sanitized = {
       ...validated,
+      bio: validated.bio ? sanitizeRichText(validated.bio) : validated.bio,
+    }
+
+    const updateData: TablesUpdate<'profiles'> = {
+      ...sanitized,
       updated_at: new Date().toISOString(),
     }
 

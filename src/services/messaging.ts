@@ -10,6 +10,7 @@ import { sendMessageSchema } from '@/lib/validations'
 import { EmailService } from './email'
 import { messageNewTemplate } from '@/lib/email-templates'
 import { NotificationService } from './notifications'
+import { sanitizePlainText } from '@/lib/sanitize'
 
 export type MessageThread = Tables<'message_threads'>
 export type Message = Tables<'messages'>
@@ -214,12 +215,15 @@ export class MessagingService {
       throw new UnauthorizedError('Not authenticated')
     }
 
+    // Sanitize message content to prevent XSS (strip all HTML)
+    const sanitizedContent = sanitizePlainText(validated.content)
+
     const { data, error } = await supabase
       .from('messages')
       .insert({
         thread_id: threadId,
         sender_id: user.id,
-        content: validated.content,
+        content: sanitizedContent,
       })
       .select()
       .single()

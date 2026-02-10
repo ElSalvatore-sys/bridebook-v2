@@ -12,6 +12,7 @@ import {
   type CreateVenueInput,
   type UpdateVenueInput,
 } from '@/lib/validations'
+import { sanitizeRichText } from '@/lib/sanitize'
 
 export type Venue = Tables<'venues'>
 export type VenueType = Enums<'venue_type'>
@@ -81,8 +82,16 @@ export class VenueService {
       throw new UnauthorizedError('Not authenticated')
     }
 
-    const insertData: TablesInsert<'venues'> = {
+    // Sanitize description to prevent XSS (allow safe HTML formatting)
+    const sanitized = {
       ...validated,
+      description: validated.description
+        ? sanitizeRichText(validated.description)
+        : validated.description,
+    }
+
+    const insertData: TablesInsert<'venues'> = {
+      ...sanitized,
       profile_id: user.id,
     }
 
@@ -171,8 +180,16 @@ export class VenueService {
     // Validate input
     const validated = updateVenueSchema.parse(input)
 
-    const updateData: TablesUpdate<'venues'> = {
+    // Sanitize description to prevent XSS (allow safe HTML formatting)
+    const sanitized = {
       ...validated,
+      description: validated.description
+        ? sanitizeRichText(validated.description)
+        : validated.description,
+    }
+
+    const updateData: TablesUpdate<'venues'> = {
+      ...sanitized,
       updated_at: new Date().toISOString(),
     }
 

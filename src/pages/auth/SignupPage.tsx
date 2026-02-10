@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/card'
 import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
+import { checkRateLimit, resetRateLimit, RATE_LIMITS } from '@/lib/rate-limit'
 
 const ROLE_OPTIONS = [
   {
@@ -107,6 +108,16 @@ export default function SignupPage() {
       return
     }
 
+    // Check rate limit
+    const rateLimit = checkRateLimit('signup', RATE_LIMITS.AUTH)
+    if (!rateLimit.allowed) {
+      toast.error(
+        'Too many signup attempts',
+        { description: `Please try again in ${rateLimit.retryAfter} seconds` }
+      )
+      return
+    }
+
     setIsLoading(true)
 
     try {
@@ -119,6 +130,7 @@ export default function SignupPage() {
       if (error) {
         toast.error(error.message)
       } else {
+        resetRateLimit('signup')
         toast.success('Check your email to verify your account')
         navigate('/login')
       }

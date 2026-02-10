@@ -7,6 +7,7 @@ import { supabase } from './supabase'
 import { handleSupabaseError, UnauthorizedError } from '@/lib/errors'
 import type { CreateEnquiryInput } from '@/lib/validations'
 import { NotificationService } from './notifications'
+import { sanitizePlainText } from '@/lib/sanitize'
 
 export type EnquiryStatus = 'PENDING' | 'READ' | 'RESPONDED' | 'ARCHIVED'
 
@@ -47,6 +48,9 @@ export class EnquiryService {
       throw new UnauthorizedError('Not authenticated')
     }
 
+    // Sanitize message to prevent XSS (strip all HTML)
+    const sanitizedMessage = sanitizePlainText(input.message)
+
     const { data, error } = await supabase
       .from('enquiries')
       .insert({
@@ -58,7 +62,7 @@ export class EnquiryService {
         name: input.name,
         email: input.email,
         phone: input.phone ?? null,
-        message: input.message,
+        message: sanitizedMessage,
         event_date: input.event_date ?? null,
       })
       .select()

@@ -3,6 +3,8 @@ import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { useZodForm } from '@/lib/forms/use-zod-form'
 import { sendMessageSchema } from '@/lib/validations'
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limit'
+import { toast } from 'sonner'
 
 interface MessageInputProps {
   onSend: (content: string) => void
@@ -15,6 +17,16 @@ export function MessageInput({ onSend, isPending }: MessageInputProps) {
   })
 
   const handleSubmit = form.handleSubmit((data) => {
+    // Check rate limit
+    const rateLimit = checkRateLimit('message-send', RATE_LIMITS.MESSAGE_SEND)
+    if (!rateLimit.allowed) {
+      toast.error(
+        'Slow down',
+        { description: 'You are sending messages too quickly' }
+      )
+      return
+    }
+
     onSend(data.content)
     form.reset()
   })

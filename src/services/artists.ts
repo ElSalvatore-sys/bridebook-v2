@@ -12,6 +12,7 @@ import {
   type CreateArtistInput,
   type UpdateArtistInput,
 } from '@/lib/validations'
+import { sanitizeRichText } from '@/lib/sanitize'
 
 export type Artist = Tables<'artists'>
 export type ArtistGenre = Tables<'artist_genres'>
@@ -74,8 +75,14 @@ export class ArtistService {
       throw new UnauthorizedError('Not authenticated')
     }
 
-    const insertData: TablesInsert<'artists'> = {
+    // Sanitize bio to prevent XSS (allow safe HTML formatting)
+    const sanitized = {
       ...validated,
+      bio: validated.bio ? sanitizeRichText(validated.bio) : validated.bio,
+    }
+
+    const insertData: TablesInsert<'artists'> = {
+      ...sanitized,
       profile_id: user.id,
     }
 
@@ -169,8 +176,14 @@ export class ArtistService {
     // Validate input
     const validated = updateArtistSchema.parse(input)
 
-    const updateData: TablesUpdate<'artists'> = {
+    // Sanitize bio to prevent XSS (allow safe HTML formatting)
+    const sanitized = {
       ...validated,
+      bio: validated.bio ? sanitizeRichText(validated.bio) : validated.bio,
+    }
+
+    const updateData: TablesUpdate<'artists'> = {
+      ...sanitized,
       updated_at: new Date().toISOString(),
     }
 

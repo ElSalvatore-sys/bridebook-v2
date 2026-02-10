@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
+import { checkRateLimit, resetRateLimit, RATE_LIMITS } from '@/lib/rate-limit'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
@@ -21,6 +22,16 @@ export default function ForgotPasswordPage() {
       return
     }
 
+    // Check rate limit
+    const rateLimit = checkRateLimit('password-reset', RATE_LIMITS.PASSWORD_RESET)
+    if (!rateLimit.allowed) {
+      toast.error(
+        'Too many password reset attempts',
+        { description: `Please try again in ${Math.ceil(rateLimit.retryAfter / 60)} minutes` }
+      )
+      return
+    }
+
     setIsLoading(true)
 
     try {
@@ -31,6 +42,7 @@ export default function ForgotPasswordPage() {
         return
       }
 
+      resetRateLimit('password-reset')
       setIsSubmitted(true)
       toast.success('Check your email for the reset link')
     } catch {

@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { toast } from 'sonner'
+import { checkRateLimit, resetRateLimit, RATE_LIMITS } from '@/lib/rate-limit'
 
 export function LoginPage() {
   const [email, setEmail] = useState('')
@@ -29,12 +30,26 @@ export function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    // Check rate limit
+    const rateLimit = checkRateLimit('login', RATE_LIMITS.AUTH)
+    if (!rateLimit.allowed) {
+      toast.error(
+        'Too many login attempts',
+        { description: `Please try again in ${rateLimit.retryAfter} seconds` }
+      )
+      return
+    }
+
     setIsLoading(true)
 
     try {
       const { error } = await signIn(email, password)
       if (error) {
         toast.error(error.message)
+      } else {
+        // Reset rate limit on successful login
+        resetRateLimit('login')
       }
       // Navigation happens automatically via AuthContext
     } catch {
