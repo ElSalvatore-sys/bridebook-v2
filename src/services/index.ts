@@ -91,6 +91,14 @@ export {
 } from './enquiries'
 
 export {
+  AdminService,
+  type PlatformStats,
+  type AdminUser,
+  type AdminActivity,
+  type AdminUsersResult,
+} from './admin'
+
+export {
   NotificationService,
   type Notification,
   type NotificationType,

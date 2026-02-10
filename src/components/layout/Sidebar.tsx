@@ -12,6 +12,8 @@ import {
   Settings,
   Image,
   HelpCircle,
+  Shield,
+  Users,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUIStore } from '@/stores'
@@ -45,10 +47,19 @@ function SidebarContent() {
 
   const isOwnerRole = profile?.role === 'ARTIST' || profile?.role === 'VENUE'
 
+  const isAdmin = profile?.role === 'ADMIN'
+
   const allNavItems = [
     ...navItems,
     ...(isOwnerRole
       ? [{ name: 'media', label: 'My Photos', icon: Image, href: '/media' }]
+      : []),
+    ...(isAdmin
+      ? [
+          { name: 'admin', label: 'Admin', icon: Shield, href: '/admin' },
+          { name: 'admin-users', label: 'Users', icon: Users, href: '/admin/users' },
+          { name: 'admin-content', label: 'Content', icon: Music, href: '/admin/content' },
+        ]
       : []),
   ]
 

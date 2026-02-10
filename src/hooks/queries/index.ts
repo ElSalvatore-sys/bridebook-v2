@@ -127,6 +127,15 @@ export {
   useUpdateEmailPreferences,
 } from './use-email-preferences'
 
+// Admin hooks and keys
+export {
+  adminKeys,
+  useAdminStats,
+  useAdminUsers,
+  useUpdateUserRole,
+  useAdminActivity,
+} from './use-admin'
+
 // Notification hooks and keys
 export {
   notificationKeys,

@@ -64,6 +64,15 @@ const MediaManagerPage = lazy(() =>
 const NotificationsPage = lazy(() =>
   import('@/pages/NotificationsPage').then((m) => ({ default: m.NotificationsPage }))
 )
+const AdminDashboardPage = lazy(() =>
+  import('@/pages/admin/AdminDashboardPage').then((m) => ({ default: m.AdminDashboardPage }))
+)
+const AdminUsersPage = lazy(() =>
+  import('@/pages/admin/AdminUsersPage').then((m) => ({ default: m.AdminUsersPage }))
+)
+const AdminContentPage = lazy(() =>
+  import('@/pages/admin/AdminContentPage').then((m) => ({ default: m.AdminContentPage }))
+)
 
 // Wrapper for lazy-loaded components
 function LazyPage({ children }: { children: React.ReactNode }) {
@@ -259,6 +268,41 @@ export const router = createBrowserRouter([
             element: (
               <LazyPage>
                 <MediaManagerPage />
+              </LazyPage>
+            ),
+          },
+        ],
+      },
+
+      // Admin pages - require ADMIN role
+      {
+        element: (
+          <ProtectedRoute requiredRole="ADMIN">
+            <MainLayout />
+          </ProtectedRoute>
+        ),
+        children: [
+          {
+            path: 'admin',
+            element: (
+              <LazyPage>
+                <AdminDashboardPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'admin/users',
+            element: (
+              <LazyPage>
+                <AdminUsersPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'admin/content',
+            element: (
+              <LazyPage>
+                <AdminContentPage />
               </LazyPage>
             ),
           },
