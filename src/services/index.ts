@@ -103,3 +103,12 @@ export {
   type Notification,
   type NotificationType,
 } from './notifications'
+
+export {
+  AnalyticsService,
+  type UserStats,
+  type EnquiryStats,
+  type ActivityStats,
+  type SignupTrendPoint,
+  type TopEntity,
+} from './analytics'

@@ -145,3 +145,14 @@ export {
   useMarkAllNotificationsRead,
   useRealtimeNotifications,
 } from './use-notifications'
+
+// Analytics hooks and keys
+export {
+  analyticsKeys,
+  useUserStats,
+  useEnquiryStats,
+  useActivityStats,
+  useSignupTrend,
+  useTopArtists,
+  useTopVenues,
+} from './use-analytics'

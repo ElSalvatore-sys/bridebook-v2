@@ -14,6 +14,7 @@ import {
   HelpCircle,
   Shield,
   Users,
+  BarChart3,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useUIStore } from '@/stores'
@@ -59,6 +60,7 @@ function SidebarContent() {
           { name: 'admin', label: 'Admin', icon: Shield, href: '/admin' },
           { name: 'admin-users', label: 'Users', icon: Users, href: '/admin/users' },
           { name: 'admin-content', label: 'Content', icon: Music, href: '/admin/content' },
+          { name: 'admin-analytics', label: 'Analytics', icon: BarChart3, href: '/admin/analytics' },
         ]
       : []),
   ]

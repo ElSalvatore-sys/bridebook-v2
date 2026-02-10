@@ -73,6 +73,9 @@ const AdminUsersPage = lazy(() =>
 const AdminContentPage = lazy(() =>
   import('@/pages/admin/AdminContentPage').then((m) => ({ default: m.AdminContentPage }))
 )
+const AdminAnalyticsPage = lazy(() =>
+  import('@/pages/admin/AdminAnalyticsPage').then((m) => ({ default: m.default }))
+)
 
 // Wrapper for lazy-loaded components
 function LazyPage({ children }: { children: React.ReactNode }) {
@@ -303,6 +306,14 @@ export const router = createBrowserRouter([
             element: (
               <LazyPage>
                 <AdminContentPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: 'admin/analytics',
+            element: (
+              <LazyPage>
+                <AdminAnalyticsPage />
               </LazyPage>
             ),
           },
