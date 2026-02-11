@@ -1,46 +1,130 @@
+import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
+import { ChevronRight } from 'lucide-react'
 
 const roles = [
-  { emoji: '🎵', title: 'Fan / Community', desc: 'Entdecke Künstler & unvergessliche Events' },
-  { emoji: '🎤', title: 'Künstler', desc: 'Zeig dein Talent und werde gebucht' },
-  { emoji: '🛠️', title: 'Dienstleister', desc: 'Verbinde dich mit Event-Planern' },
+  {
+    emoji: '🎵',
+    title: 'Fan / Community',
+    desc: 'Entdecke Künstler & unvergessliche Events',
+    gradient: 'from-blue-600/30 to-blue-800/30',
+    border: 'border-blue-500/50',
+    hoverBorder: 'hover:border-blue-400',
+    hoverShadow: 'hover:shadow-lg hover:shadow-blue-500/30',
+  },
+  {
+    emoji: '🎤',
+    title: 'Künstler',
+    desc: 'Zeig dein Talent und werde gebucht',
+    gradient: 'from-purple-600/30 to-purple-800/30',
+    border: 'border-purple-500/50',
+    hoverBorder: 'hover:border-purple-400',
+    hoverShadow: 'hover:shadow-lg hover:shadow-purple-500/30',
+  },
+  {
+    emoji: '🛠️',
+    title: 'Dienstleister',
+    desc: 'Verbinde dich mit Event-Planern',
+    gradient: 'from-orange-700/30 to-amber-800/30',
+    border: 'border-orange-500/50',
+    hoverBorder: 'hover:border-orange-400',
+    hoverShadow: 'hover:shadow-lg hover:shadow-orange-500/30',
+  },
   {
     emoji: '🎉',
     title: 'Event-Veranstalter',
     desc: 'Plane perfekte Events mit den richtigen Leuten',
+    gradient: 'from-teal-600/30 to-cyan-700/30',
+    border: 'border-teal-500/50',
+    hoverBorder: 'hover:border-teal-400',
+    hoverShadow: 'hover:shadow-lg hover:shadow-teal-500/30',
   },
-  { emoji: '🏢', title: 'Location-Inhaber', desc: 'Vermiete deine Location an Veranstalter' },
+  {
+    emoji: '🏢',
+    title: 'Location-Inhaber',
+    desc: 'Vermiete deine Location an Veranstalter',
+    gradient: 'from-amber-700/30 to-orange-800/30',
+    border: 'border-amber-500/50',
+    hoverBorder: 'hover:border-amber-400',
+    hoverShadow: 'hover:shadow-lg hover:shadow-amber-500/30',
+  },
 ]
 
 export function RegisterForm({ onSwitchToLogin }: { onSwitchToLogin: () => void }) {
   return (
-    <div className="space-y-6">
+    <motion.div
+      className="space-y-6"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.2 }}
+    >
+      {/* Header */}
       <div className="text-center">
-        <h2 className="text-2xl font-bold text-white mb-2 uppercase">
+        <h2 className="font-display text-3xl font-bold text-white mb-2 uppercase italic">
           WILLKOMMEN BEI BLOGHEAD
         </h2>
         <p className="text-white/70">Wähle deinen Account-Typ</p>
       </div>
 
-      <div className="grid gap-3">
-        {roles.map((role) => (
-          <button
+      {/* Role Cards Grid */}
+      <motion.div
+        className="grid grid-cols-1 sm:grid-cols-2 gap-3"
+        variants={{
+          hidden: {},
+          show: {
+            transition: {
+              staggerChildren: 0.1,
+            },
+          },
+        }}
+        initial="hidden"
+        animate="show"
+      >
+        {roles.map((role, index) => (
+          <motion.button
             key={role.title}
-            className="flex items-center gap-4 p-4 bg-[#171717] hover:bg-[#610AD1]/20 rounded-lg transition-all group"
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              show: { opacity: 1, y: 0 },
+            }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className={`
+              relative flex items-start gap-4 p-5 rounded-xl
+              bg-gradient-to-br ${role.gradient}
+              border-2 ${role.border} ${role.hoverBorder}
+              ${role.hoverShadow}
+              transition-all duration-300
+              text-left
+              ${index === 4 ? 'sm:col-span-2 sm:max-w-md sm:mx-auto' : ''}
+            `}
           >
-            <span className="text-2xl">{role.emoji}</span>
-            <div className="flex-1 text-left">
-              <h3 className="text-white font-bold">{role.title}</h3>
-              <p className="text-white/70 text-sm">{role.desc}</p>
+            {/* Emoji */}
+            <span className="text-4xl">{role.emoji}</span>
+
+            {/* Content */}
+            <div className="flex-1">
+              <h3 className="text-white font-bold text-base mb-1">{role.title}</h3>
+              <p className="text-white/70 text-sm leading-snug">{role.desc}</p>
             </div>
-          </button>
+
+            {/* Arrow Icon */}
+            <ChevronRight className="w-5 h-5 text-white/50 flex-shrink-0 mt-1" />
+          </motion.button>
         ))}
+      </motion.div>
+
+      {/* Divider */}
+      <div className="text-center text-white/50 text-sm uppercase tracking-wide">
+        oder schnell mit
       </div>
 
-      <div className="text-center text-white/70 text-sm">oder schnell mit</div>
-
+      {/* Social Logins */}
       <div className="grid grid-cols-2 gap-3">
-        <Button variant="outline" className="bg-transparent border-white/20 text-white hover:bg-white/10">
+        <Button
+          variant="outline"
+          className="bg-white text-gray-700 border-none hover:bg-gray-100 font-medium"
+        >
           <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
             <path
               fill="currentColor"
@@ -61,20 +145,24 @@ export function RegisterForm({ onSwitchToLogin }: { onSwitchToLogin: () => void 
           </svg>
           Google
         </Button>
-        <Button variant="outline" className="bg-transparent border-white/20 text-white hover:bg-white/10">
-          <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="#1877F2">
+        <Button
+          variant="outline"
+          className="bg-[#1877F2] text-white border-none hover:bg-[#166FE5] font-medium"
+        >
+          <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
           </svg>
           Facebook
         </Button>
       </div>
 
+      {/* Toggle to Login */}
       <button
         onClick={onSwitchToLogin}
-        className="w-full text-white/70 hover:text-white text-sm transition-colors"
+        className="w-full text-white/70 hover:text-white text-sm transition-colors text-center"
       >
-        Bereits registriert? Anmelden
+        Bereits registriert? <span className="text-purple-400 hover:text-purple-300 font-semibold">Anmelden</span>
       </button>
-    </div>
+    </motion.div>
   )
 }

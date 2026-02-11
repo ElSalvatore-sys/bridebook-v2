@@ -1,32 +1,52 @@
+import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
 export function LoginForm({ onSwitchToRegister }: { onSwitchToRegister: () => void }) {
   return (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-white text-center uppercase">
+    <motion.div
+      className="space-y-6"
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.2 }}
+    >
+      {/* Header */}
+      <h2 className="font-display text-3xl font-bold text-white text-center uppercase italic">
         LETS WORK TOGETHER!
       </h2>
 
+      {/* Form Fields */}
       <div className="space-y-4">
         <Input
           placeholder="EMAIL"
-          className="bg-[#171717] border-none text-white placeholder:text-white/50"
+          className="bg-white/5 border-2 border-white/20 text-white placeholder:text-white/50 rounded-xl focus:border-purple-500 focus:bg-white/10 focus:ring-2 focus:ring-purple-500/20"
         />
         <Input
           type="password"
           placeholder="PASSWORT"
-          className="bg-[#171717] border-none text-white placeholder:text-white/50"
+          className="bg-white/5 border-2 border-white/20 text-white placeholder:text-white/50 rounded-xl focus:border-purple-500 focus:bg-white/10 focus:ring-2 focus:ring-purple-500/20"
         />
-        <Button className="w-full bg-[#610AD1] hover:bg-[#610AD1]/90 text-white font-bold">
+        <Button className="w-full bg-gradient-to-r from-purple-600 to-orange-500 hover:from-purple-700 hover:to-orange-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40 transition-all">
           LOGIN!
         </Button>
       </div>
 
-      <div className="text-center text-white/70 text-sm">oder</div>
+      {/* Forgot Password */}
+      <div className="text-center">
+        <button className="text-sm text-white/70 hover:text-white transition-colors">
+          Passwort vergessen?
+        </button>
+      </div>
 
+      {/* Divider */}
+      <div className="text-center text-white/50 text-sm">oder</div>
+
+      {/* Social Logins */}
       <div className="space-y-3">
-        <Button variant="outline" className="w-full bg-transparent border-white/20 text-white hover:bg-white/10">
+        <Button
+          variant="outline"
+          className="w-full bg-white text-gray-700 border-none hover:bg-gray-100 font-medium"
+        >
           <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
             <path
               fill="currentColor"
@@ -47,20 +67,24 @@ export function LoginForm({ onSwitchToRegister }: { onSwitchToRegister: () => vo
           </svg>
           Mit Google anmelden
         </Button>
-        <Button variant="outline" className="w-full bg-transparent border-white/20 text-white hover:bg-white/10">
-          <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="#1877F2">
+        <Button
+          variant="outline"
+          className="w-full bg-[#1877F2] text-white border-none hover:bg-[#166FE5] font-medium"
+        >
+          <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
           </svg>
           Mit Facebook anmelden
         </Button>
       </div>
 
+      {/* Toggle to Register */}
       <button
         onClick={onSwitchToRegister}
-        className="w-full text-white/70 hover:text-white text-sm transition-colors"
+        className="w-full text-white/70 hover:text-white text-sm transition-colors text-center"
       >
-        Noch kein Mitglied? Registrieren
+        Noch kein Mitglied? <span className="text-purple-400 hover:text-purple-300 font-semibold">Registrieren</span>
       </button>
-    </div>
+    </motion.div>
   )
 }

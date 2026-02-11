@@ -7,8 +7,8 @@ export function AuthModal() {
   const { isOpen, mode, closeModal, switchMode } = useAuthModal()
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && closeModal()}>
-      <DialogContent className="sm:max-w-[500px] bg-[#232323] border-none">
+    <Dialog open={isOpen} onOpenChange={closeModal}>
+      <DialogContent className="sm:max-w-[600px] bg-[#1a1a2e] border-none shadow-2xl backdrop-blur-sm">
         {mode === 'login' ? (
           <LoginForm onSwitchToRegister={() => switchMode('register')} />
         ) : (
