@@ -197,14 +197,9 @@ describe('use-favorites hooks', () => {
       const mockArtists = [{ id: 'a1', stage_name: 'Test Artist' }]
       mocks.getFavoriteArtistsEnriched.mockResolvedValue(mockArtists)
 
-      const { result } = renderHook(
-        () =>
-          useFavoriteArtistsEnriched({
-            queryKey: ['favorites', 'list', 'artists-enriched'],
-            queryFn: mocks.getFavoriteArtistsEnriched,
-          } as any),
-        { wrapper: createWrapper() }
-      )
+      const { result } = renderHook(() => useFavoriteArtistsEnriched(), {
+        wrapper: createWrapper(),
+      })
 
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true)
@@ -219,14 +214,9 @@ describe('use-favorites hooks', () => {
       const mockVenues = [{ id: 'v1', venue_name: 'Test Venue' }]
       mocks.getFavoriteVenuesEnriched.mockResolvedValue(mockVenues)
 
-      const { result } = renderHook(
-        () =>
-          useFavoriteVenuesEnriched({
-            queryKey: ['favorites', 'list', 'venues-enriched'],
-            queryFn: mocks.getFavoriteVenuesEnriched,
-          } as any),
-        { wrapper: createWrapper() }
-      )
+      const { result } = renderHook(() => useFavoriteVenuesEnriched(), {
+        wrapper: createWrapper(),
+      })
 
       await waitFor(() => {
         expect(result.current.isSuccess).toBe(true)

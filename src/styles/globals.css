@@ -66,7 +66,7 @@
   --radius-pill: 9999px;
 
   /* Fonts */
-  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  --font-sans: 'Roboto', system-ui, ui-sans-serif, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
   --font-display: 'Playfair Display Variable', ui-serif, Georgia, Cambria, serif;
 
   /* Shadows — lighter than TW4 defaults */
@@ -130,6 +130,7 @@
 @utility scrollbar-none {
   -ms-overflow-style: none;
   scrollbar-width: none;
+
   &::-webkit-scrollbar {
     display: none;
   }

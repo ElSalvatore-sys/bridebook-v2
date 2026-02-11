@@ -3,18 +3,65 @@
  */
 
 import { describe, it, expect, vi, beforeAll } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { HomePage } from '../HomePage'
 
-// Mock ResizeObserver
+// Mock browser APIs
 beforeAll(() => {
   global.ResizeObserver = class ResizeObserver {
     observe() {}
     unobserve() {}
     disconnect() {}
   }
+
+  global.IntersectionObserver = class IntersectionObserver {
+    root = null
+    rootMargin = ''
+    thresholds = []
+
+    constructor(callback: IntersectionObserverCallback) {
+      // Immediately call callback with mock entry
+      setTimeout(() => {
+        callback(
+          [
+            {
+              isIntersecting: true,
+              target: {} as Element,
+              intersectionRatio: 1,
+              boundingClientRect: {} as DOMRectReadOnly,
+              intersectionRect: {} as DOMRectReadOnly,
+              rootBounds: null,
+              time: Date.now(),
+            },
+          ] as IntersectionObserverEntry[],
+          this
+        )
+      }, 0)
+    }
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+    takeRecords() {
+      return []
+    }
+  } as any
+
+  // Mock matchMedia
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: vi.fn().mockImplementation((query: string) => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  })
 })
 
 // Mock auth context
@@ -24,20 +71,6 @@ vi.mock('@/context/AuthContext', () => ({
     profile: null,
     loading: false,
   }),
-}))
-
-// Mock discovery hooks
-vi.mock('@/hooks/queries/use-discovery', () => ({
-  useDiscoverArtists: vi.fn(() => ({
-    data: [{ id: '1', stage_name: 'Test Artist' }],
-    isLoading: false,
-    isError: false,
-  })),
-  useDiscoverVenues: vi.fn(() => ({
-    data: [{ id: '1', venue_name: 'Test Venue' }],
-    isLoading: false,
-    isError: false,
-  })),
 }))
 
 const createWrapper = () => {
@@ -52,22 +85,52 @@ const createWrapper = () => {
 }
 
 describe('HomePage', () => {
-  it('renders without crashing', () => {
+  it('renders without crashing', async () => {
     render(<HomePage />, { wrapper: createWrapper() })
-    const headings = screen.getAllByRole('heading')
-    expect(headings.length).toBeGreaterThan(0)
+    // Wait for lazy-loaded components
+    await waitFor(() => {
+      const headings = screen.getAllByRole('heading')
+      expect(headings.length).toBeGreaterThan(0)
+    })
   })
 
-  it('displays hero section', () => {
+  it('displays hero section with main heading', async () => {
     render(<HomePage />, { wrapper: createWrapper() })
-    const headings = screen.getAllByRole('heading')
-    expect(headings.length).toBeGreaterThan(0)
+    // Wait for lazy-loaded hero component
+    await waitFor(() => {
+      expect(screen.getByText(/Bloghead/i)).toBeInTheDocument()
+    })
   })
 
-  it('shows featured content sections', () => {
+  it('shows features section', async () => {
     render(<HomePage />, { wrapper: createWrapper() })
-    // Should have artists and venues sections
-    const headings = screen.getAllByRole('heading')
-    expect(headings.length).toBeGreaterThan(0)
+    // Wait for features section
+    await waitFor(() => {
+      expect(screen.getByText(/Everything You Need/i)).toBeInTheDocument()
+    })
+  })
+
+  it('shows stats section', async () => {
+    render(<HomePage />, { wrapper: createWrapper() })
+    // Wait for stats section
+    await waitFor(() => {
+      expect(screen.getByText(/Trusted by Thousands/i)).toBeInTheDocument()
+    })
+  })
+
+  it('shows how it works section', async () => {
+    render(<HomePage />, { wrapper: createWrapper() })
+    // Wait for how it works section
+    await waitFor(() => {
+      expect(screen.getByText(/How It Works/i)).toBeInTheDocument()
+    })
+  })
+
+  it('shows CTA section', async () => {
+    render(<HomePage />, { wrapper: createWrapper() })
+    // Wait for CTA section
+    await waitFor(() => {
+      expect(screen.getByText(/Ready to Get Started?/i)).toBeInTheDocument()
+    })
   })
 })

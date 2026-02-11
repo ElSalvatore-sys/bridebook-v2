@@ -36,7 +36,7 @@ export default defineConfig({
           'vendor-supabase': ['@supabase/supabase-js'],
           'vendor-charts': ['recharts'],
           'vendor-form': ['react-hook-form', '@hookform/resolvers', 'zod'],
-          'vendor-utils': ['date-fns', 'clsx', 'tailwind-merge', 'dompurify'],
+          'vendor-utils': ['date-fns', 'clsx', 'tailwind-merge', 'dompurify', 'framer-motion'],
         },
       },
     },
